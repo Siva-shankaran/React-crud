@@ -1,0 +1,161 @@
+import React, { useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { ToastContainer, toast } from 'react-toastify';
+import AddUser from './components/AddUser';
+import EditUser from './components/EditUser';
+import UserList from './components/UserList';
+import './App.css';
+
+function App() {
+  const [users, setUsers] = useState([]);
+  const [editIndex, setEditIndex] = useState(null);
+  const [darkMode, setDarkMode] = useState(false);
+
+  const addUser = (user) => {
+    setUsers([...users, user]);
+    toast.success('User added successfully!');
+  };
+
+  const deleteUser = (index) => {
+    setUsers(users.filter((_, i) => i !== index));
+    toast.error('User deleted!');
+  };
+
+  const editUser = (index) => {
+    setEditIndex(index);
+  };
+
+  const updateUser = (user) => {
+    const updatedUsers = [...users];
+    updatedUsers[editIndex] = user;
+    setUsers(updatedUsers);
+    setEditIndex(null);
+    toast.info('User updated successfully!');
+  };
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
+  return (
+    <div className={darkMode ? 'App dark-mode' : 'App'}>
+      <div className="container">
+        <button onClick={toggleDarkMode} className="btn btn-secondary mb-3">
+          {darkMode ? 'Light Mode' : 'Dark Mode'}
+        </button>
+        {editIndex !== null ? (
+          <EditUser user={users[editIndex]} onUpdate={updateUser} />
+        ) : (
+          <AddUser onAdd={addUser} />
+        )}
+        <UserList users={users} onEdit={editUser} onDelete={deleteUser} />
+      </div>
+      <ToastContainer />
+    </div>
+  );
+}
+
+export default App;
+
+------App. Css.. 
+
+/* App.css */
+body {
+  background-color: #f8f9fa;
+}
+
+.container {
+  max-width: 800px;
+  margin-top: 50px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #343a40;
+}
+
+/* Dark Mode Styles */
+.dark-mode {
+  background-color: #343a40;
+  color: #ffffff;
+}
+
+.dark-mode .container {
+  background-color: #495057;
+  color: #ffffff;
+}
+/* Hover Effects */
+.btn:hover {
+  opacity: 0.8;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #f1f1f1;
+}
+_______adduser.jsx------
+
+import React, { useState } from 'react';
+import { toast } from 'react-toastify';
+
+const AddUser = ({ onAdd }) => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!name || !email) {
+      toast.error('All fields are required!');
+      return;
+    }
+
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      toast.error('Invalid email format!');
+      return;
+    }
+
+    onAdd({ name, email });
+    setName('');
+    setEmail('');
+  };
+
+  return (
+    <div className="container mt-4">
+      <h2>Add User</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>Name</label>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Enter name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>Email</label>
+          <input
+            type="email"
+            className="form-control"
+            placeholder="Enter email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit" className="btn btn-success btn-block">
+          Add User
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default AddUser;
