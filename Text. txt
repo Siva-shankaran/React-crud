@@ -172,5 +172,82 @@ app. css
   margin-top: 10px;
 }
 
+--------
+aapp jsx
 
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import AddUser from './components/AddUser';
+import EditUser from './components/EditUser';
+import UserList from './components/UserList';
+import UserDetails from './components/UserDetails';
 
+function App() {
+  const [users, setUsers] = useState([]);
+  const [editIndex, setEditIndex] = useState(null);
+
+  const addUser = (user) => {
+    setUsers([...users, user]);
+  };
+
+  const deleteUser = (index) => {
+    setUsers(users.filter((_, i) => i !== index));
+  };
+
+  const editUser = (index) => {
+    setEditIndex(index);
+  };
+
+  const updateUser = (user) => {
+    const updatedUsers = [...users];
+    updatedUsers[editIndex] = user;
+    setUsers(updatedUsers);
+    setEditIndex(null);
+  };
+
+  return (
+    <Router>
+      <div className="App">
+        <div className="container mt-4">
+          <nav className="navbar navbar-expand-lg navbar-light bg-light mb-4">
+            <Link className="navbar-brand" to="/">Home</Link>
+            <div className="collapse navbar-collapse">
+              <ul className="navbar-nav ml-auto">
+                <li className="nav-item">
+                  <Link className="nav-link" to="/user-list">View User List</Link>
+                </li>
+              </ul>
+            </div>
+          </nav>
+
+          <Routes>
+            <Route
+              path="/"
+              element={
+                editIndex !== null ? (
+                  <EditUser user={users[editIndex]} onUpdate={updateUser} />
+                ) : (
+                  <AddUser onAdd={addUser} />
+                )
+              }
+            />
+            <Route path="/user-list" element={<UserList users={users} />} />
+            <Route
+              path="/user/:id"
+              element={
+                <UserDetails
+                  users={users}
+                  onEdit={editUser}
+                  onDelete={deleteUser}
+                />
+              }
+            />
+          </Routes>
+        </div>
+      </div>
+    </Router>
+  );
+}
+
+export default App;
