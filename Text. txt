@@ -251,3 +251,176 @@ function App() {
 }
 
 export default App;
+
+
+
+--------updates app. jsx
+
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Link, useNavigate } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import AddUser from './components/AddUser';
+import EditUser from './components/EditUser';
+import UserList from './components/UserList';
+import UserDetails from './components/UserDetails';
+
+function App() {
+  const [users, setUsers] = useState([]);
+  const [editIndex, setEditIndex] = useState(null);
+
+  const addUser = (user) => {
+    setUsers([...users, user]);
+  };
+
+  const deleteUser = (index) => {
+    setUsers(users.filter((_, i) => i !== index));
+  };
+
+  const editUser = (index) => {
+    setEditIndex(index);
+  };
+
+  const updateUser = (user) => {
+    const updatedUsers = [...users];
+    updatedUsers[editIndex] = user;
+    setUsers(updatedUsers);
+    setEditIndex(null);
+  };
+
+  return (
+    <Router>
+      <div className="App">
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+          <div className="container">
+            <Link className="navbar-brand" to="/">User Management</Link>
+            <div className="collapse navbar-collapse">
+              <ul className="navbar-nav ml-auto">
+                <li className="nav-item">
+                  <Link className="nav-link" to="/user-list">View Users</Link>
+                </li>
+                <li className="nav-item">
+                  <Link className="nav-link" to="/add-user">Add User</Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+
+        <div className="container">
+          <Routes>
+            <Route path="/" element={<UserList users={users} />} />
+            <Route path="/add-user" element={<AddUser onAdd={addUser} />} />
+            <Route
+              path="/edit-user/:id"
+              element={<EditUser user={users[editIndex]} onUpdate={updateUser} />}
+            />
+            <Route
+              path="/user/:id"
+              element={<UserDetails users={users} onEdit={editUser} onDelete={deleteUser} />}
+            />
+            <Route path="/user-list" element={<UserList users={users} />} />
+          </Routes>
+        </div>
+      </div>
+    </Router>
+  );
+}
+
+export default App;
+
+-----+++style.css
+
+/* General Styling */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f9fa;
+}
+
+/* Navbar Styling */
+.navbar {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.nav-link {
+  font-size: 1rem;
+  padding: 10px 15px;
+}
+
+.nav-link:hover {
+  background-color: #495057;
+  border-radius: 5px;
+}
+
+/* Card Styling */
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card-body {
+  padding: 20px;
+}
+
+/* Button Styling */
+.btn {
+  border-radius: 8px;
+  padding: 10px 20px;
+  transition: background-color 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #a71d2a;
+}
+
+/* Form Styling */
+.form-control {
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 1rem;
+}
+
+.form-group label {
+  font-weight: bold;
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+  .card {
+    margin-bottom: 20px;
+  }
+
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+
+  .nav-link {
+    font-size: 0.9rem;
+  }
+}
+
