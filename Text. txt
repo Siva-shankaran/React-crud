@@ -1,144 +1,94 @@
-import React, { useState } from 'react';
 
-const UserList = ({ users, onEdit, onDelete }) => {
+userlist. jsx-----------
+
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
+const UserList = ({ users }) => {
+  const navigate = useNavigate();
+
+  const handleViewDetails = (index) => {
+    navigate(`/user/${index}`);
+  };
+
   return (
     <div className="container mt-4">
       <h2>User List</h2>
-      <table className="table table-bordered">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user, index) => (
-            <tr key={index}>
-              <td>{user.name}</td>
-              <td>{user.email}</td>
-              <td>
-                <button onClick={() => onEdit(index)} className="btn btn-primary">
-                  Edit
+      <div className="row">
+        {users.map((user, index) => (
+          <div key={index} className="col-md-4">
+            <div className="card mb-3">
+              <div className="card-body">
+                <h5 className="card-title">{user.name}</h5>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => handleViewDetails(index)}
+                >
+                  View Details
                 </button>
-                <button onClick={() => onDelete(index)} className="btn btn-danger ml-2">
-                  Delete
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
 
 export default UserList;
 
-_------------
-Adduser. List
 
-import React, { useState } from 'react';
+-------------userdetails. jsx
 
-const AddUser = ({ onAdd }) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onAdd({ name, email });
-    setName('');
-    setEmail('');
-  };
+import React from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+
+const UserDetails = ({ users, onEdit, onDelete }) => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const user = users[id];
+
+  if (!user) {
+    return <h3>User not found</h3>;
+  }
 
   return (
     <div className="container mt-4">
-      <h2>Add User</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Name</label>
-          <input
-            type="text"
-            className="form-control"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Email</label>
-          <input
-            type="email"
-            className="form-control"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" className="btn btn-success">
-          Add User
-        </button>
-      </form>
+      <h2>User Details</h2>
+      <p><strong>Name:</strong> {user.name}</p>
+      <p><strong>Email:</strong> {user.email}</p>
+
+      <button
+        className="btn btn-primary mr-2"
+        onClick={() => onEdit(parseInt(id))}
+      >
+        Edit
+      </button>
+      <button
+        className="btn btn-danger"
+        onClick={() => {
+          onDelete(parseInt(id));
+          navigate('/');
+        }}
+      >
+        Delete
+      </button>
     </div>
   );
 };
 
-export default AddUser;
+export default UserDetails;
 
-----------edit_----------
-
+---------------app. jsx
 
 import React, { useState } from 'react';
-
-const EditUser = ({ user, onUpdate }) => {
-  const [name, setName] = useState(user.name);
-  const [email, setEmail] = useState(user.email);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onUpdate({ name, email });
-  };
-
-  return (
-    <div className="container mt-4">
-      <h2>Edit User</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Name</label>
-          <input
-            type="text"
-            className="form-control"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label>Email</label>
-          <input
-            type="email"
-            className="form-control"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" className="btn btn-primary">
-          Update User
-        </button>
-      </form>
-    </div>
-  );
-};
-
-export default EditUser;
-
-------update-----+
-import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import AddUser from './components/AddUser';
 import EditUser from './components/EditUser';
 import UserList from './components/UserList';
+import UserDetails from './components/UserDetails';
 
 function App() {
   const [users, setUsers] = useState([]);
@@ -164,24 +114,63 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <div className="container">
-        {editIndex !== null ? (
-          <EditUser user={users[editIndex]} onUpdate={updateUser} />
-        ) : (
-          <AddUser onAdd={addUser} />
-        )}
-        <UserList users={users} onEdit={editUser} onDelete={deleteUser} />
+    <Router>
+      <div className="App">
+        <div className="container">
+          <Routes>
+            <Route
+              path="/"
+              element={
+                editIndex !== null ? (
+                  <EditUser user={users[editIndex]} onUpdate={updateUser} />
+                ) : (
+                  <AddUser onAdd={addUser} />
+                )
+              }
+            />
+            <Route
+              path="/"
+              element={<UserList users={users} />}
+            />
+            <Route
+              path="/user/:id"
+              element={
+                <UserDetails
+                  users={users}
+                  onEdit={editUser}
+                  onDelete={deleteUser}
+                />
+              }
+            />
+          </Routes>
+        </div>
       </div>
-    </div>
+    </Router>
   );
 }
 
 export default App;
 
-----csss----
+------------
+app. css
 
 .container {
-  max-width: 600px;
+  max-width: 800px;
   margin-top: 20px;
 }
+
+.card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.btn {
+  margin-top: 10px;
+}
+
+
+
