@@ -1,0 +1,185 @@
+css
+
+/* Global Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2 {
+  color: #333;
+  text-align: center;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin: 5px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+a {
+  text-decoration: none;
+  color: white;
+}
+
+/* Home Page Styles */
+.container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.create-button {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.create-button button {
+  width: 150px;
+}
+
+/* Employee Card Styles */
+.employee-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin: 15px 0;
+  padding: 15px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.employee-card h3 {
+  margin: 0;
+  font-size: 20px;
+  color: #333;
+}
+
+.employee-details {
+  margin: 10px 0;
+  font-size: 16px;
+  color: #555;
+}
+
+.card-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.card-actions button {
+  margin-left: 10px;
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+
+  .employee-card {
+    padding: 10px;
+  }
+
+  .card-actions {
+    flex-direction: column;
+  }
+
+  .card-actions button {
+    width: 100%;
+    margin: 5px 0;
+  }
+}
+
+
+
+-------emp card  jsx
+
+
+import React from 'react';
+
+const EmployeeCard = ({ employee, handleEdit, handleDelete }) => {
+  return (
+    <div className="employee-card">
+      <h3>{employee.name}</h3>
+      <div className="employee-details">
+        <p>Email: {employee.email}</p>
+        <p>Phone: {employee.phone}</p>
+      </div>
+      <div className="card-actions">
+        <button onClick={() => handleEdit(employee.id)}>Edit</button>
+        <button onClick={() => handleDelete(employee.id)}>Delete</button>
+      </div>
+    </div>
+  );
+};
+
+export default EmployeeCard;
+
+
+---------home. jsx
+
+
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import EmployeeCard from './EmployeeCard';
+
+const Home = () => {
+  const [employees, setEmployees] = useState([]);
+
+  useEffect(() => {
+    const storedEmployees = JSON.parse(localStorage.getItem('employees')) || [];
+    setEmployees(storedEmployees);
+  }, []);
+
+  const handleDelete = (id) => {
+    const updatedEmployees = employees.filter((emp) => emp.id !== id);
+    localStorage.setItem('employees', JSON.stringify(updatedEmployees));
+    setEmployees(updatedEmployees);
+  };
+
+  const handleEdit = (id) => {
+    // Navigate to edit form with selected employee's ID
+    console.log("Edit employee with ID:", id);
+  };
+
+  return (
+    <div className="container">
+      <h1>Employee Management</h1>
+      <div className="create-button">
+        <Link to="/create">
+          <button>Add Employee</button>
+        </Link>
+      </div>
+      <div>
+        {employees.map((employee) => (
+          <EmployeeCard
+            key={employee.id}
+            employee={employee}
+            handleEdit={handleEdit}
+            handleDelete={handleDelete}
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default Home;
+
+
+-----------
