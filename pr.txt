@@ -1,101 +1,155 @@
-/* Form Container Styling */
-form {
-    max-width: 500px;
-    margin: 20px auto;
-    padding: 25px;
-    background: linear-gradient(145deg, #ffffff, #e6e6e6);
-    border-radius: 15px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-    border: 1px solid #ccc;
+App. Jss------
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './components/Home';
+import CreateEmployee from './components/CreateEmployee';
+import EmployeeDetails from './components/EmployeeDetails';
+
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/create" element={<CreateEmployee />} />
+        <Route path="/employee/:id" element={<EmployeeDetails />} />
+      </Routes>
+    </Router>
+  );
 }
 
-/* Form Title */
-h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-    font-size: 24px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
+export default App;
 
-/* Input Fields Styling */
-div {
-    margin-bottom: 20px;
-}
 
-label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-    color: #555;
-    font-size: 14px;
-}
+------ home. Js
 
-input[type="text"],
-input[type="email"],
-input[type="password"] {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 16px;
-    background-color: #f8f8f8;
-    color: #333;
-    transition: all 0.3s ease-in-out;
-}
 
-/* Input Focus Effects */
-input:focus {
-    outline: none;
-    border-color: #4CAF50;
-    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
-    background-color: #ffffff;
-}
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import EmployeeCard from './EmployeeCard';
 
-/* Submit Button Styling */
-button {
-    width: 100%;
-    padding: 14px 0;
-    font-size: 18px;
-    border: none;
-    border-radius: 10px;
-    background: linear-gradient(90deg, #007BFF, #0056b3);
-    color: #fff;
-    text-transform: uppercase;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
+const Home = () => {
+  const [employees, setEmployees] = useState([]);
 
-/* Button Hover and Active Effects */
-button:hover {
-    background: linear-gradient(90deg, #0056b3, #004494);
-    box-shadow: 0 8px 16px rgba(0, 91, 187, 0.2);
-}
+  useEffect(() => {
+    const storedEmployees = JSON.parse(localStorage.getItem('employees')) || [];
+    setEmployees(storedEmployees);
+  }, []);
 
-button:active {
-    background: linear-gradient(90deg, #004494, #003377);
-    box-shadow: inset 0 4px 8px rgba(0, 51, 119, 0.3);
-}
+  return (
+    <div>
+      <h1>Employee Management</h1>
+      <Link to="/create">
+        <button>Create Employee</button>
+      </Link>
+      <div>
+        {employees.map((employee) => (
+          <EmployeeCard key={employee.id} employee={employee} />
+        ))}
+      </div>
+    </div>
+  );
+};
 
-/* Placeholder Text Styling */
-input::placeholder {
-    color: #aaa;
-    font-style: italic;
-}
+export default Home;
 
-/* Form Responsive Design */
-@media (max-width: 600px) {
-    form {
-        padding: 20px;
-    }
 
-    h2 {
-        font-size: 20px;
-    }
+------ 'create emp. Js
 
-    button {
-        font-size: 16px;
-    }
-}
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+const CreateEmployee = () => {
+  const [employee, setEmployee] = useState({ name: '', email: '', phone: '' });
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setEmployee({ ...employee, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = () => {
+    const employees = JSON.parse(localStorage.getItem('employees')) || [];
+    employees.push({ ...employee, id: Date.now() });
+    localStorage.setItem('employees', JSON.stringify(employees));
+    navigate('/');
+  };
+
+  return (
+    <div>
+      <h2>Create Employee</h2>
+      <form onSubmit={(e) => e.preventDefault()}>
+        <input name="name" placeholder="Name" onChange={handleChange} />
+        <input name="email" placeholder="Email" onChange={handleChange} />
+        <input name="phone" placeholder="Phone" onChange={handleChange} />
+        <button onClick={handleSubmit}>Save</button>
+      </form>
+    </div>
+  );
+};
+
+export default CreateEmployee;
+
+
+------emp. Card
+
+
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+const EmployeeCard = ({ employee }) => {
+  const handleDelete = () => {
+    const employees = JSON.parse(localStorage.getItem('employees')) || [];
+    const updatedEmployees = employees.filter((emp) => emp.id !== employee.id);
+    localStorage.setItem('employees', JSON.stringify(updatedEmployees));
+    window.location.reload();
+  };
+
+  return (
+    <div>
+      <h3>{employee.name}</h3>
+      <Link to={`/employee/${employee.id}`}>View Details</Link>
+      <button onClick={handleDelete}>Delete</button>
+    </div>
+  );
+};
+
+export default EmployeeCard;
+
+---------emp details. Js
+
+
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+
+const EmployeeDetails = () => {
+  const { id } = useParams();
+  const [employee, setEmployee] = useState(null);
+
+  useEffect(() => {
+    const employees = JSON.parse(localStorage.getItem('employees')) || [];
+    const emp = employees.find((emp) => emp.id === parseInt(id));
+    setEmployee(emp);
+  }, [id]);
+
+  if (!employee) {
+    return <p>Employee not found</p>;
+  }
+
+  return (
+    <div>
+      <h2>Employee Details</h2>
+      <p>Name: {employee.name}</p>
+      <p>Email: {employee.email}</p>
+      <p>Phone: {employee.phone}</p>
+    </div>
+  );
+};
+
+export default EmployeeDetails;
+
+---index. Js
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+
+ReactDOM.render(<App />, document.getElementById('root'));
