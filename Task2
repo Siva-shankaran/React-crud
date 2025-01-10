@@ -1,5 +1,7 @@
 app. jsx
 
+
+
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import UserCard from './components/UserCard';
@@ -7,18 +9,24 @@ import UserDetails from './components/UserDetails';
 import UpdateUser from './components/UpdateUser';
 
 function App() {
-  const [users, setUsers] = useState([
-    { id: 1, name: 'John Doe', email: 'john@example.com', phone: '123-456-7890' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', phone: '987-654-3210' },
-  ]);
+  const [users, setUsers] = useState([]);
+
+  // Function to add a new user
+  const addUser = (user) => {
+    setUsers([...users, { ...user, id: users.length + 1 }]);
+  };
 
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<UserCard users={users} />} />
-        <Route path="/user/:id" element={<UserDetails users={users} setUsers={setUsers} />} />
-        <Route path="/update/:id" element={<UpdateUser users={users} setUsers={setUsers} />} />
-      </Routes>
+      <div>
+        <h1>User Management System</h1>
+        <UserCard users={users} addUser={addUser} />
+        <Routes>
+          <Route path="/" element={<UserCard users={users} addUser={addUser} />} />
+          <Route path="/user/:id" element={<UserDetails users={users} setUsers={setUsers} />} />
+          <Route path="/update/:id" element={<UpdateUser users={users} setUsers={setUsers} />} />
+        </Routes>
+      </div>
     </Router>
   );
 }
@@ -26,14 +34,53 @@ function App() {
 export default App;
 
 
------usercardm
-
-import React from 'react';
+----us. jsx
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const UserCard = ({ users }) => {
+const UserCard = ({ users, addUser }) => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (name && email && phone) {
+      addUser({ name, email, phone });
+      setName('');
+      setEmail('');
+      setPhone('');
+    } else {
+      alert('Please fill all the fields!');
+    }
+  };
+
   return (
     <div>
+      <h2>Add User</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Enter Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <input
+          type="email"
+          placeholder="Enter Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Enter Phone"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+        />
+        <button type="submit">Add User</button>
+      </form>
+
       <h2>User List</h2>
       <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
         {users.map((user) => (
@@ -49,122 +96,4 @@ const UserCard = ({ users }) => {
 };
 
 export default UserCard;
----------------userdetails
 
-import React from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-
-const UserDetails = ({ users, setUsers }) => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-
-  const user = users.find((u) => u.id === parseInt(id));
-
-  const handleDelete = () => {
-    setUsers(users.filter((u) => u.id !== parseInt(id)));
-    navigate('/');
-  };
-
-  if (!user) {
-    return <h2>User not found</h2>;
-  }
-
-  return (
-    <div>
-      <h2>User Details</h2>
-      <p><strong>Name:</strong> {user.name}</p>
-      <p><strong>Email:</strong> {user.email}</p>
-      <p><strong>Phone:</strong> {user.phone}</p>
-      <Link to={`/update/${user.id}`}>
-        <button>Update</button>
-      </Link>
-      <button onClick={handleDelete} style={{ marginLeft: '10px' }}>Delete</button>
-      <br />
-      <Link to="/">Back to User List</Link>
-    </div>
-  );
-};
-
-export default UserDetails;
-
-
------upd
-
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-
-const UpdateUser = ({ users, setUsers }) => {
-  const { id } = useParams();
-  const navigate = useNavigate();
-
-  const user = users.find((u) => u.id === parseInt(id));
-
-  const [name, setName] = useState(user.name);
-  const [email, setEmail] = useState(user.email);
-  const [phone, setPhone] = useState(user.phone);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const updatedUser = { ...user, name, email, phone };
-    setUsers(users.map((u) => (u.id === user.id ? updatedUser : u)));
-    navigate(`/user/${user.id}`);
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <h2>Update User</h2>
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Enter Name"
-      />
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Enter Email"
-      />
-      <input
-        type="text"
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
-        placeholder="Enter Phone"
-      />
-      <button type="submit">Update User</button>
-    </form>
-  );
-};
-
-export default UpdateUser;
-body {
-  font-family: 'Arial', sans-serif;
-}
-
-h2 {
-  text-align: center;
-}
-
-form {
-  max-width: 400px;
-  margin: 20px auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-input {
-  padding: 10px;
-  font-size: 16px;
-}
-
-button {
-  padding: 10px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #ddd;
-}
