@@ -1,230 +1,43 @@
+package com.example.userapp.controller;
 
-home. jsx
+import com.example.userapp.model.User;
+import com.example.userapp.service.UserService;
+import org.springframework.web.bind.annotation.*;
 
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import java.util.List;
 
-function Home() {
-  const [users, setUsers] = useState([
-    { id: 1, name: 'John Doe', email: 'john@example.com', phone: '123-456-7890' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', phone: '098-765-4321' },
-  ]);
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
 
-  return (
-    <div className="home">
-      <h1>User List</h1>
-      <Link to="/create-user" className="create-btn">Create User</Link>
-      <div className="user-cards">
-        {users.map(user => (
-          <Link to={`/user/${user.id}`} key={user.id} className="user-card">
-            <h2>{user.name}</h2>
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @GetMapping
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Long id) {
+        return userService.getUserById(id);
+    }
+
+    @PostMapping
+    public User createUser(@RequestBody User user) {
+        return userService.createUser(user);
+    }
+
+    @PutMapping("/{id}")
+    public User updateUser(@PathVariable Long id, @RequestBody User user) {
+        return userService.updateUser(id, user);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+    }
 }
-
-export default Home;
-
---------------USERDETAILS
-
-
-import React from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-
-function UserDetails({ users, setUsers }) {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const user = users.find(user => user.id === parseInt(id));
-
-  const deleteUser = () => {
-    setUsers(users.filter(u => u.id !== user.id));
-    toast.success('User deleted successfully!');
-    navigate('/');
-  };
-
-  return (
-    <div className="user-details">
-      <h1>{user.name}</h1>
-      <p>Email: {user.email}</p>
-      <p>Phone: {user.phone}</p>
-      <button onClick={() => navigate(`/update-user/${user.id}`)}>Update</button>
-      <button onClick={deleteUser}>Delete</button>
-    </div>
-  );
-}
-
-export default UserDetails;
-
-
--------create user
-
-import React, { useState } from 'react';
-import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
-
-function CreateUser({ setUsers }) {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const navigate = useNavigate();
-
-  const handleSubmit = e => {
-    e.preventDefault();
-    const newUser = { id: Date.now(), name, email, phone };
-    setUsers(prev => [...prev, newUser]);
-    toast.success('User created successfully!');
-    navigate('/');
-  };
-
-  return (
-    <div className="create-user">
-      <h1>Create User</h1>
-      <form onSubmit={handleSubmit}>
-        <input type="text" placeholder="Name" value={name} onChange={e => setName(e.target.value)} required />
-        <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
-        <input type="tel" placeholder="Phone" value={phone} onChange={e => setPhone(e.target.value)} required />
-        <button type="submit">Create</button>
-      </form>
-    </div>
-  );
-}
-
-export default CreateUser;
-
-
-
---------app. jsx
-
-
-
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './components/Home';
-import UserDetails from './components/UserDetails';
-import CreateUser from './components/CreateUser';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import './index.css';
-
-function App() {
-  const [users, setUsers] = useState([]);
-
-  return (
-    <Router>
-      <ToastContainer />
-      <Routes>
-        <Route path="/" element={<Home users={users} />} />
-        <Route path="/user/:id" element={<UserDetails users={users} setUsers={setUsers} />} />
-        <Route path="/create-user" element={<CreateUser setUsers={setUsers} />} />
-      </Routes>
-    </Router>
-  );
-}
-
-export default App;
-
-
-
-
------index. cc
-
-body {
-  background-color: #121212;
-  color: #ffffff;
-  font-family: 'Arial', sans-serif;
-  margin: 0;
-  padding: 0;
-}
-
-h1, h2 {
-  color: #fff;
-}
-
-.home {
-  padding: 20px;
-}
-
-.create-btn {
-  padding: 10px 20px;
-  background-color: #1e88e5;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-}
-
-.create-btn:hover {
-  background-color: #1565c0;
-}
-
-.user-cards {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.user-card {
-  background-color: #333;
-  padding: 20px;
-  border-radius: 10px;
-  text-decoration: none;
-  color: #fff;
-  transition: transform 0.3s ease, background-color 0.3s ease;
-}
-
-.user-card:hover {
-  background-color: #444;
-  transform: translateY(-5px);
-}
-
-.user-details {
-  padding: 20px;
-}
-
-.user-details button {
-  margin-right: 10px;
-  padding: 10px 20px;
-  background-color: #1e88e5;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-}
-
-.user-details button:hover {
-  background-color: #1565c0;
-}
-
-.create-user form {
-  display: flex;
-  flex-direction: column;
-}
-
-.create-user input {
-  margin-bottom: 10px;
-  padding: 10px;
-  border: 1px solid #444;
-  border-radius: 5px;
-  background-color: #222;
-  color: #fff;
-}
-
-.create-user button {
-  padding: 10px 20px;
-  background-color: #1e88e5;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-}
-
-.create-user button:hover {
-  background-color: #1565c0;
-}
-
-
-
