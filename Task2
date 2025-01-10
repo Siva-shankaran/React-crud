@@ -1,9 +1,242 @@
-app. jsx
+app. csss-------
 
+
+/* Global Styles */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 20px;
+  color: #222;
+}
+
+/* Form Styles */
+form {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+form input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+}
+
+form input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+form button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+form button:hover {
+  background-color: #0056b3;
+}
+
+/* Card Styles */
+.user-card {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.user-card a {
+  text-decoration: none;
+}
+
+.card {
+  width: 180px;
+  padding: 20px;
+  border-radius: 12px;
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.2s ease-in-out;
+}
+
+.card h3 {
+  color: #333;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Details Page Styles */
+.user-details {
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.user-details h2 {
+  color: #222;
+}
+
+.user-details p {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.user-details button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.user-details button:hover {
+  background-color: #0056b3;
+}
+
+/* Update Page Styles */
+.update-form {
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.update-form input {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.update-form button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.update-form button:hover {
+  background-color: #0056b3;
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+.dark-mode form,
+.dark-mode .card,
+.dark-mode .user-details,
+.dark-mode .update-form {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+}
+
+.dark-mode form input,
+.dark-mode .update-form input {
+  background-color: #333;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+.dark-mode form input:focus,
+.dark-mode .update-form input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.dark-mode button {
+  background-color: #333;
+}
+
+.dark-mode button:hover {
+  background-color: #007bff;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .user-card {
+    flex-direction: column;
+  }
+
+  .card {
+    width: 100%;
+  }
+}
+
+
+
+
+
+---------app. jsx
 
 
 import React, { useState } from 'react';
+
+function App() {
+  const [darkMode, setDarkMode] = useState(false);
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.body.classList.toggle('dark-mode');
+  };
+
+  return (
+    <div>
+      <button onClick={toggleDarkMode} style={{ margin: '20px' }}>
+        {darkMode ? 'Light Mode' : 'Dark Mode'}
+      </button>
+      {/* Other components */}
+    </div>
+  );
+}
+
+export default App;
+
+
+-------------app. jsx
+
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import UserCard from './components/UserCard';
 import UserDetails from './components/UserDetails';
 import UpdateUser from './components/UpdateUser';
@@ -14,11 +247,13 @@ function App() {
   // Function to add a new user
   const addUser = (user) => {
     setUsers([...users, { ...user, id: users.length + 1 }]);
+    toast.success('User added successfully!');
   };
 
   return (
     <Router>
       <div>
+        <ToastContainer />
         <h1>User Management System</h1>
         <UserCard users={users} addUser={addUser} />
         <Routes>
@@ -34,31 +269,66 @@ function App() {
 export default App;
 
 
-----us. jsx
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+-----USERDETAILS
 
-const UserCard = ({ users, addUser }) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
 
-  // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (name && email && phone) {
-      addUser({ name, email, phone });
-      setName('');
-      setEmail('');
-      setPhone('');
-    } else {
-      alert('Please fill all the fields!');
-    }
+
+import React from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+
+const UserDetails = ({ users, setUsers }) => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const user = users.find((u) => u.id === parseInt(id));
+
+  const handleDelete = () => {
+    setUsers(users.filter((u) => u.id !== parseInt(id)));
+    toast.success('User deleted successfully!');
+    navigate('/');
   };
 
   return (
-    <div>
-      <h2>Add User</h2>
+    <div className="user-details">
+      <h2>{user.name}</h2>
+      <p>Email: {user.email}</p>
+      <p>Phone: {user.phone}</p>
+      <button onClick={handleDelete}>Delete</button>
+      <button onClick={() => navigate(`/update/${id}`)}>Update</button>
+    </div>
+  );
+};
+
+export default UserDetails;
+
+
+------update. jsx
+
+import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+
+const UpdateUser = ({ users, setUsers }) => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const user = users.find((u) => u.id === parseInt(id));
+
+  const [name, setName] = useState(user.name);
+  const [email, setEmail] = useState(user.email);
+  const [phone, setPhone] = useState(user.phone);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const updatedUser = { id: user.id, name, email, phone };
+    setUsers(users.map((u) => (u.id === user.id ? updatedUser : u)));
+    toast.success('User updated successfully!');
+    navigate('/');
+  };
+
+  return (
+    <div className="update-form">
+      <h2>Update User</h2>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -78,22 +348,36 @@ const UserCard = ({ users, addUser }) => {
           value={phone}
           onChange={(e) => setPhone(e.target.value)}
         />
-        <button type="submit">Add User</button>
+        <button type="submit">Update User</button>
       </form>
-
-      <h2>User List</h2>
-      <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-        {users.map((user) => (
-          <Link to={`/user/${user.id}`} key={user.id} style={{ textDecoration: 'none' }}>
-            <div style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '8px', width: '150px', textAlign: 'center', backgroundColor: '#f9f9f9' }}>
-              <h3>{user.name}</h3>
-            </div>
-          </Link>
-        ))}
-      </div>
     </div>
   );
 };
 
-export default UserCard;
+export default UpdateUser;
+
+
+
+-------toast
+
+/* Toastify Custom Styling */
+.Toastify__toast {
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.Toastify__toast--success {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.Toastify__toast--error {
+  background-color: #f44336;
+  color: #fff;
+}
+
+.Toastify__toast--info {
+  background-color: #2196f3;
+  color: #fff;
+}
 
