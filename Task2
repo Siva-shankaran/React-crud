@@ -1,185 +1,230 @@
-css
 
-/* Global Styles */
+home. jsx
+
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+
+function Home() {
+  const [users, setUsers] = useState([
+    { id: 1, name: 'John Doe', email: 'john@example.com', phone: '123-456-7890' },
+    { id: 2, name: 'Jane Smith', email: 'jane@example.com', phone: '098-765-4321' },
+  ]);
+
+  return (
+    <div className="home">
+      <h1>User List</h1>
+      <Link to="/create-user" className="create-btn">Create User</Link>
+      <div className="user-cards">
+        {users.map(user => (
+          <Link to={`/user/${user.id}`} key={user.id} className="user-card">
+            <h2>{user.name}</h2>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default Home;
+
+--------------USERDETAILS
+
+
+import React from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+
+function UserDetails({ users, setUsers }) {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const user = users.find(user => user.id === parseInt(id));
+
+  const deleteUser = () => {
+    setUsers(users.filter(u => u.id !== user.id));
+    toast.success('User deleted successfully!');
+    navigate('/');
+  };
+
+  return (
+    <div className="user-details">
+      <h1>{user.name}</h1>
+      <p>Email: {user.email}</p>
+      <p>Phone: {user.phone}</p>
+      <button onClick={() => navigate(`/update-user/${user.id}`)}>Update</button>
+      <button onClick={deleteUser}>Delete</button>
+    </div>
+  );
+}
+
+export default UserDetails;
+
+
+-------create user
+
+import React, { useState } from 'react';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+
+function CreateUser({ setUsers }) {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const navigate = useNavigate();
+
+  const handleSubmit = e => {
+    e.preventDefault();
+    const newUser = { id: Date.now(), name, email, phone };
+    setUsers(prev => [...prev, newUser]);
+    toast.success('User created successfully!');
+    navigate('/');
+  };
+
+  return (
+    <div className="create-user">
+      <h1>Create User</h1>
+      <form onSubmit={handleSubmit}>
+        <input type="text" placeholder="Name" value={name} onChange={e => setName(e.target.value)} required />
+        <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
+        <input type="tel" placeholder="Phone" value={phone} onChange={e => setPhone(e.target.value)} required />
+        <button type="submit">Create</button>
+      </form>
+    </div>
+  );
+}
+
+export default CreateUser;
+
+
+
+--------app. jsx
+
+
+
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './components/Home';
+import UserDetails from './components/UserDetails';
+import CreateUser from './components/CreateUser';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './index.css';
+
+function App() {
+  const [users, setUsers] = useState([]);
+
+  return (
+    <Router>
+      <ToastContainer />
+      <Routes>
+        <Route path="/" element={<Home users={users} />} />
+        <Route path="/user/:id" element={<UserDetails users={users} setUsers={setUsers} />} />
+        <Route path="/create-user" element={<CreateUser setUsers={setUsers} />} />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
+
+
+
+
+-----index. cc
+
 body {
+  background-color: #121212;
+  color: #ffffff;
   font-family: 'Arial', sans-serif;
-  background-color: #f9f9f9;
   margin: 0;
   padding: 0;
 }
 
 h1, h2 {
-  color: #333;
-  text-align: center;
+  color: #fff;
 }
 
-button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  margin: 5px;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-a {
-  text-decoration: none;
-  color: white;
-}
-
-/* Home Page Styles */
-.container {
-  max-width: 900px;
-  margin: 20px auto;
+.home {
   padding: 20px;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.create-button {
-  text-align: center;
-  margin-bottom: 20px;
+.create-btn {
+  padding: 10px 20px;
+  background-color: #1e88e5;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
-.create-button button {
-  width: 150px;
+.create-btn:hover {
+  background-color: #1565c0;
 }
 
-/* Employee Card Styles */
-.employee-card {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  margin: 15px 0;
-  padding: 15px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.employee-card h3 {
-  margin: 0;
-  font-size: 20px;
-  color: #333;
-}
-
-.employee-details {
-  margin: 10px 0;
-  font-size: 16px;
-  color: #555;
-}
-
-.card-actions {
+.user-cards {
   display: flex;
-  justify-content: flex-end;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
-.card-actions button {
-  margin-left: 10px;
-  padding: 8px 12px;
-  font-size: 14px;
+.user-card {
+  background-color: #333;
+  padding: 20px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #fff;
+  transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .container {
-    padding: 15px;
-  }
+.user-card:hover {
+  background-color: #444;
+  transform: translateY(-5px);
+}
 
-  .employee-card {
-    padding: 10px;
-  }
+.user-details {
+  padding: 20px;
+}
 
-  .card-actions {
-    flex-direction: column;
-  }
+.user-details button {
+  margin-right: 10px;
+  padding: 10px 20px;
+  background-color: #1e88e5;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
 
-  .card-actions button {
-    width: 100%;
-    margin: 5px 0;
-  }
+.user-details button:hover {
+  background-color: #1565c0;
+}
+
+.create-user form {
+  display: flex;
+  flex-direction: column;
+}
+
+.create-user input {
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #444;
+  border-radius: 5px;
+  background-color: #222;
+  color: #fff;
+}
+
+.create-user button {
+  padding: 10px 20px;
+  background-color: #1e88e5;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.create-user button:hover {
+  background-color: #1565c0;
 }
 
 
 
--------emp card  jsx
-
-
-import React from 'react';
-
-const EmployeeCard = ({ employee, handleEdit, handleDelete }) => {
-  return (
-    <div className="employee-card">
-      <h3>{employee.name}</h3>
-      <div className="employee-details">
-        <p>Email: {employee.email}</p>
-        <p>Phone: {employee.phone}</p>
-      </div>
-      <div className="card-actions">
-        <button onClick={() => handleEdit(employee.id)}>Edit</button>
-        <button onClick={() => handleDelete(employee.id)}>Delete</button>
-      </div>
-    </div>
-  );
-};
-
-export default EmployeeCard;
-
-
----------home. jsx
-
-
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import EmployeeCard from './EmployeeCard';
-
-const Home = () => {
-  const [employees, setEmployees] = useState([]);
-
-  useEffect(() => {
-    const storedEmployees = JSON.parse(localStorage.getItem('employees')) || [];
-    setEmployees(storedEmployees);
-  }, []);
-
-  const handleDelete = (id) => {
-    const updatedEmployees = employees.filter((emp) => emp.id !== id);
-    localStorage.setItem('employees', JSON.stringify(updatedEmployees));
-    setEmployees(updatedEmployees);
-  };
-
-  const handleEdit = (id) => {
-    // Navigate to edit form with selected employee's ID
-    console.log("Edit employee with ID:", id);
-  };
-
-  return (
-    <div className="container">
-      <h1>Employee Management</h1>
-      <div className="create-button">
-        <Link to="/create">
-          <button>Add Employee</button>
-        </Link>
-      </div>
-      <div>
-        {employees.map((employee) => (
-          <EmployeeCard
-            key={employee.id}
-            employee={employee}
-            handleEdit={handleEdit}
-            handleDelete={handleDelete}
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default Home;
-
-
------------
