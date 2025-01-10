@@ -41,3 +41,147 @@ public class UserController {
         userService.deleteUser(id);
     }
 }
+
+
+app. jsx---------
+
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './components/Home';
+import UserDetails from './components/UserDetails';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './App.css';
+
+function App() {
+  return (
+    <Router>
+      <ToastContainer />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/user/:id" element={<UserDetails />} />
+      </Routes>
+    </Router>
+  );
+}
+
+export default App;
+
+-------+-home.jsx
+
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+
+function Home() {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    axios.get('/api/users').then(response => {
+      setUsers(response.data);
+    });
+  }, []);
+
+  return (
+    <div className="home">
+      <h1>User List</h1>
+      <div className="card-container">
+        {users.map(user => (
+          <Link to={`/user/${user.id}`} key={user.id} className="card">
+            <h2>{user.name}</h2>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default Home;
+
+--------user details-
+
+
+import React, { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+
+function UserDetails() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [user, setUser] = useState({});
+
+  useEffect(() => {
+    axios.get(`/api/users/${id}`).then(response => {
+      setUser(response.data);
+    });
+  }, [id]);
+
+  const deleteUser = () => {
+    axios.delete(`/api/users/${id}`).then(() => {
+      toast.success('User deleted!');
+      navigate('/');
+    });
+  };
+
+  return (
+    <div className="user-details">
+      <h1>{user.name}</h1>
+      <p>Email: {user.email}</p>
+      <p>Phone: {user.phone}</p>
+      <button onClick={() => navigate(`/update/${id}`)}>Update</button>
+      <button onClick={deleteUser}>Delete</button>
+    </div>
+  );
+}
+
+export default UserDetails;
+
+-------app. csd
+
+body {
+  background-color: #121212;
+  color: #fff;
+  font-family: 'Arial', sans-serif;
+}
+
+.home, .user-details {
+  text-align: center;
+  padding: 20px;
+}
+
+.card-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.card {
+  background-color: #1e1e1e;
+  margin: 10px;
+  padding: 20px;
+  border-radius: 10px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+button {
+  margin: 10px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #ff4081;
+  color: #fff;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #ff79b0;
+}
+
+
