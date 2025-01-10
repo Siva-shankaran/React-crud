@@ -1,3 +1,189 @@
+
+
+/* Toastify Custom Styling */
+.Toastify__toast {
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.Toastify__toast--success {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.Toastify__toast--error {
+  background-color: #f44336;
+  color: #fff;
+}
+
+.Toastify__toast--info {
+  background-color: #2196f3;
+  color: #fff;
+}
+
+
+/* General Styling */
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #121212;
+  color: #ffffff;
+}
+
+/* Container Styling */
+.container {
+  width: 80%;
+  margin: auto;
+  padding: 20px;
+  background-color: #1e1e1e;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Header Styling */
+h1 {
+  text-align: center;
+  color: #e0e0e0;
+}
+
+/* Input Fields */
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 8px;
+  background-color: #333;
+  color: #fff;
+}
+
+input:focus {
+  outline: none;
+  border: 1px solid #6c63ff;
+}
+
+/* Buttons */
+button {
+  padding: 12px 20px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 8px;
+  background-color: #6c63ff;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background-color: #5248c8;
+  transform: scale(1.05);
+}
+
+/* User List Cards */
+.card {
+  background-color: #222;
+  padding: 20px;
+  border-radius: 12px;
+  margin: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.02);
+  background-color: #333;
+}
+
+/* Details Page Styling */
+.details-page {
+  padding: 20px;
+  background-color: #1e1e1e;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.details-page h2 {
+  margin: 0;
+  color: #6c63ff;
+}
+
+.details-page p {
+  margin: 10px 0;
+}
+
+/* Update Form Styling */
+.update-form {
+  padding: 20px;
+  background-color: #222;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.update-form input {
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 8px;
+}
+
+.update-form button {
+  background-color: #6c63ff;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.update-form button:hover {
+  background-color: #5248c8;
+  transform: scale(1.05);
+}
+
+/* Dark Mode Button */
+.toggle-dark-mode {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 15px;
+  background-color: #6c63ff;
+  color: #fff;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-dark-mode:hover {
+  background-color: #5248c8;
+}
+/* Button Animation */
+button {
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+/* Card Animation */
+.card {
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+
 app. csss-------
 
 
