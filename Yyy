@@ -1,0 +1,128 @@
+app. jsx
+
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import UserCard from './components/UserCard';
+import UserDetails from './components/UserDetails';
+import UpdateUser from './components/UpdateUser';
+import Login from './components/Login';
+import './App.css';
+
+function App() {
+  const [users, setUsers] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.body.classList.toggle('dark-mode');
+  };
+
+  return (
+    <Router>
+      <div className={`app-container ${darkMode ? 'dark' : ''}`}>
+        <header>
+          <h1>User Management System</h1>
+          <button onClick={toggleDarkMode}>
+            {darkMode ? 'Light Mode' : 'Dark Mode'}
+          </button>
+        </header>
+
+        <main>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                loggedIn ? (
+                  <UserCard users={users} addUser={() => {}} />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
+            <Route
+              path="/user/:id"
+              element={loggedIn ? <UserDetails users={users} setUsers={setUsers} /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/update/:id"
+              element={loggedIn ? <UpdateUser users={users} setUsers={setUsers} /> : <Navigate to="/login" />}
+            />
+            <Route path="/login" element={<Login users={users} setUsers={setUsers} setLoggedIn={setLoggedIn} />} />
+          </Routes>
+        </main>
+
+        <ToastContainer />
+      </div>
+    </Router>
+  );
+}
+
+export default App;
+
+
+----login. jsx
+
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './Login.css';
+
+const Login = ({ users, setUsers, setLoggedIn }) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [isNewUser, setIsNewUser] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+
+    if (isNewUser) {
+      if (!username || !password) {
+        alert('Please fill all fields!');
+        return;
+      }
+      setUsers([...users, { id: users.length + 1, username, password }]);
+      alert('User registered successfully!');
+    } else {
+      const user = users.find((u) => u.username === username && u.password === password);
+      if (user) {
+        alert('Login successful!');
+        setLoggedIn(true);
+        navigate('/');
+      } else {
+        alert('Invalid username or password!');
+      }
+    }
+
+    setUsername('');
+    setPassword('');
+  };
+
+  return (
+    <div className="login-container">
+      <h1>{isNewUser ? 'Register' : 'Login'}</h1>
+      <form onSubmit={handleLogin}>
+        <input
+          type="text"
+          placeholder="Enter Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Enter Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button type="submit">{isNewUser ? 'Register' : 'Login'}</button>
+      </form>
+      <p onClick={() => setIsNewUser(!isNewUser)}>
+        {isNewUser ? 'Already have an account? Login' : 'New user? Register'}
+      </p>
+    </div>
+  );
+};
+
+export default Login;
