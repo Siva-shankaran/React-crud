@@ -57,6 +57,89 @@ function App() {
         <ToastContainer />
       </div>
     </Router>
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import UserCard from './components/UserCard';
+import UserDetails from './components/UserDetails';
+import UpdateUser from './components/UpdateUser';
+import Login from './components/Login';
+import './App.css';
+
+function App() {
+  // State for managing users
+  const [users, setUsers] = useState([]);
+  const [darkMode, setDarkMode] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false); // Authentication state
+
+  // Function to toggle Dark Mode
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.body.classList.toggle('dark-mode');
+  };
+
+  // Function to add a new user
+  const addUser = (user) => {
+    setUsers([...users, { ...user, id: users.length + 1 }]);
+    toast.success('User added successfully!');
+  };
+
+  return (
+    <Router>
+      <div className={`app-container ${darkMode ? 'dark' : ''}`}>
+        {/* App Header */}
+        <header>
+          <h1>User Management System</h1>
+          <button onClick={toggleDarkMode} className="toggle-dark-mode">
+            {darkMode ? 'Light Mode' : 'Dark Mode'}
+          </button>
+        </header>
+
+        {/* Routes */}
+        <main>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                loggedIn ? (
+                  <UserCard users={users} addUser={addUser} />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
+            <Route
+              path="/user/:id"
+              element={
+                loggedIn ? (
+                  <UserDetails users={users} setUsers={setUsers} />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
+            <Route
+              path="/update/:id"
+              element={
+                loggedIn ? (
+                  <UpdateUser users={users} setUsers={setUsers} />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
+            <Route
+              path="/login"
+              element={<Login setLoggedIn={setLoggedIn} />}
+            />
+          </Routes>
+        </main>
+
+        {/* Toast Notifications */}
+        <ToastContainer />
+      </div>
+    </Router>
   );
 }
 
