@@ -1,125 +1,170 @@
-body {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  font-family: 'Arial', sans-serif;
-}
-
-:root {
-  --bg-color: #ffffff;
-  --text-color: #333333;
-  --input-bg: #f0f0f0;
-  --button-bg: #6200ea;
-  --button-hover-bg: #3700b3;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-color: #121212;
-    --text-color: #ffffff;
-    --input-bg: #1e1e1e;
-    --button-bg: #bb86fc;
-    --button-hover-bg: #3700b3;
-  }
-}
-
-.update-form {
-  max-width: 400px;
-  margin: 50px auto;
-  padding: 20px;
-  background-color: var(--input-bg);
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.update-form h2 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.update-form input {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border: none;
-  border-radius: 5px;
-  background-color: var(--bg-color);
-  color: var(--text-color);
-}
-
-.update-form input::placeholder {
-  color: var(--text-color);
-  opacity: 0.7;
-}
-
-.update-btn {
-  width: 100%;
-  padding: 10px;
-  background-color: var(--button-bg);
-  color: #ffffff;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.update-btn:hover {
-  background-color: var(--button-hover-bg);
-}
-
-
-
----------
-
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import './Login.css';
 
-const UpdateUser = ({ users, setUsers }) => {
-  const { id } = useParams();
+const Login = ({ users, setUsers }) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [isNewUser, setIsNewUser] = useState(false);
   const navigate = useNavigate();
-  const user = users.find((u) => u.id === parseInt(id));
 
-  const [name, setName] = useState(user.name);
-  const [email, setEmail] = useState(user.email);
-  const [phone, setPhone] = useState(user.phone);
-
-  const handleSubmit = (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
-    const updatedUser = { id: user.id, name, email, phone };
-    setUsers(users.map((u) => (u.id === user.id ? updatedUser : u)));
-    toast.success('User updated successfully!');
-    navigate('/');
+
+    if (isNewUser) {
+      if (!username || !password) {
+        alert('Please fill all fields!');
+        return;
+      }
+      // Add new user to users array
+      setUsers([...users, { id: users.length + 1, username, password }]);
+      alert('User registered successfully!');
+    } else {
+      // Check if user exists
+      const user = users.find((u) => u.username === username && u.password === password);
+      if (user) {
+        alert('Login successful!');
+        navigate('/');
+      } else {
+        alert('Invalid username or password!');
+      }
+    }
+
+    setUsername('');
+    setPassword('');
   };
 
   return (
-    <div className="update-form">
-      <h2>Update User</h2>
-      <form onSubmit={handleSubmit}>
+    <div className="login-container">
+      <h1>{isNewUser ? 'Register' : 'Login'}</h1>
+      <form onSubmit={handleLogin}>
         <input
           type="text"
-          placeholder="Enter Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          placeholder="Enter Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
         />
         <input
-          type="email"
-          placeholder="Enter Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="password"
+          placeholder="Enter Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
         />
-        <input
-          type="text"
-          placeholder="Enter Phone"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-        />
-        <button type="submit" className="update-btn">Update User</button>
+        <button type="submit">{isNewUser ? 'Register' : 'Login'}</button>
       </form>
+      <p onClick={() => setIsNewUser(!isNewUser)}>
+        {isNewUser ? 'Already have an account? Login' : 'New user? Register'}
+      </p>
     </div>
   );
 };
 
-export default UpdateUser;
+export default Login;
 
+-----------app. jsx
+
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import UserCard from './components/UserCard';
+import UserDetails from './components/UserDetails';
+import UpdateUser from './components/UpdateUser';
+import Login from './components/Login';
+import './App.css';
+
+function App() {
+  const [users, setUsers] = useState([]);
+  const [darkMode, setDarkMode] = useState(false);
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.body.classList.toggle('dark-mode');
+  };
+
+  return (
+    <Router>
+      <div className={`app-container ${darkMode ? 'dark' : ''}`}>
+        <header>
+          <h1>User Management System</h1>
+          <button onClick={toggleDarkMode}>
+            {darkMode ? 'Light Mode' : 'Dark Mode'}
+          </button>
+        </header>
+
+        <main>
+          <Routes>
+            <Route path="/" element={<UserCard users={users} addUser={() => {}} />} />
+            <Route path="/user/:id" element={<UserDetails users={users} setUsers={setUsers} />} />
+            <Route path="/update/:id" element={<UpdateUser users={users} setUsers={setUsers} />} />
+            <Route path="/login" element={<Login users={users} setUsers={setUsers} />} />
+          </Routes>
+        </main>
+
+        <ToastContainer />
+      </div>
+    </Router>
+  );
+}
+
+export default App;
+
+------------login. css
+body {
+  background-color: #f3f4f6;
+  font-family: 'Arial', sans-serif;
+}
+
+.login-container {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  text-align: center;
+}
+
+.login-container h1 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.login-container form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-container input {
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.login-container button {
+  padding: 12px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.login-container button:hover {
+  background-color: #0056b3;
+}
+
+.login-container p {
+  color: #007bff;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.login-container p:hover {
+  text-decoration: underline;
+}
 
