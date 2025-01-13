@@ -1,4 +1,13 @@
-
+<Route
+              path="/user/:id"
+              element={<ProtectedRoute element={<UserDetails users={users} setUsers={setUsers} />} />}
+            />
+            <Route
+              path="/update/:id"
+              element={<ProtectedRoute element={<UpdateUser users={users} setUsers={setUsers} />} />}
+            />
+            <Route path="/login" element={<Login users={users} setUsers={setUsers} setLoggedIn={setLoggedIn} />} />
+          </Routes>
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
