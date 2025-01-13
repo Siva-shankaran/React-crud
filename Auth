@@ -1,35 +1,9 @@
--------AuthCpjtext. jsx-----
 
-import React, { createContext, useState } from 'react';
-
-// Create Auth Context
-export const AuthContext = createContext();
-
-// Auth Provider component
-export const AuthProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  // Login function
-  const login = () => setIsLoggedIn(true);
-
-  // Logout function
-  const logout = () => setIsLoggedIn(false);
-
-  return (
-    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
-
-
---------App. jsx-------
-
-import React, { useContext } from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import { AuthContext, AuthProvider } from './AuthContext';
 import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 import UserCard from './components/UserCard';
 import UserDetails from './components/UserDetails';
 import UpdateUser from './components/UpdateUser';
@@ -37,71 +11,106 @@ import Login from './components/Login';
 import './App.css';
 
 function App() {
-  const { isLoggedIn } = useContext(AuthContext);
+  const [users, setUsers] = useState([]);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    document.body.classList.toggle('dark-mode');
+  };
+
+   // Function to add a new user
+   const addUser = (user) => {
+    setUsers([...users, { ...user, id: users.length + 1 }]);
+    toast.success('User added successfully!');
+  };
+
 
   return (
-    <AuthProvider>
-      <Router>
-        <div className="app-container">
-          <header>
-            <h1>User Management System</h1>
-          </header>
+    <Router>
+      <div className={`app-container ${darkMode ? 'dark' : ''}`}>
+        <header>
+          <h1>User Management System</h1>
+          <button onClick={toggleDarkMode}>
+            {darkMode ? 'Light Mode' : 'Dark Mode'}
+          </button>
+        </header>
 
-          <main>
-            <Routes>
-              <Route
-                path="/"
-                element={isLoggedIn ? <UserCard /> : <Navigate to="/login" />}
-              />
-              <Route
-                path="/user/:id"
-                element={isLoggedIn ? <UserDetails /> : <Navigate to="/login" />}
-              />
-              <Route
-                path="/update/:id"
-                element={isLoggedIn ? <UpdateUser /> : <Navigate to="/login" />}
-              />
-              <Route path="/login" element={<Login />} />
-            </Routes>
-          </main>
+        <main>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                loggedIn ? (
+                  <UserCard users={users} addUser={addUser} />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
+            <Route
+              path="/user/:id"
+              element={loggedIn ? <UserDetails users={users} setUsers={setUsers} /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/update/:id"
+              element={loggedIn ? <UpdateUser users={users} setUsers={setUsers} /> : <Navigate to="/login" />}
+            />
+            <Route path="/login" element={<Login users={users} setUsers={setUsers} setLoggedIn={setLoggedIn} />} />
+          </Routes>
+        </main>
 
-          <ToastContainer />
-        </div>
-      </Router>
-    </AuthProvider>
+        <ToastContainer />
+      </div>
+    </Router>
   );
 }
 
 export default App;
 
 
+-----------------------login.jsx ----------------------
 
---------login. jsx------
 
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../AuthContext';
 import './Login.css';
 
-const Login = () => {
+const Login = ({ users, setUsers, setLoggedIn }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useContext(AuthContext);
+  const [isNewUser, setIsNewUser] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (username === 'admin' && password === 'admin') {
-      login();
-      navigate('/');
+
+    if (isNewUser) {
+      if (!username || !password) {
+        alert('Please fill all fields!');
+        return;
+      }
+      setUsers([...users, { id: users.length + 1, username, password }]);
+      alert('User registered successfully!');
     } else {
-      alert('Invalid credentials!');
+      const user = users.find((u) => u.username === username && u.password === password);
+      if (user) {
+        alert('Login successful!');
+        setLoggedIn(true);
+        navigate('/');
+      } else {
+        alert('Invalid username or password!');
+      }
     }
+
+    setUsername('');
+    setPassword('');
   };
 
   return (
     <div className="login-container">
-      <h1>Login</h1>
+      <h1>{isNewUser ? 'Register' : 'Login'}</h1>
       <form onSubmit={handleLogin}>
         <input
           type="text"
@@ -115,28 +124,13 @@ const Login = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button type="submit">Login</button>
+        <button type="submit">{isNewUser ? 'Register' : 'Login'}</button>
       </form>
+      <p onClick={() => setIsNewUser(!isNewUser)}>
+        {isNewUser ? 'Already have an account? Login' : 'New user? Register'}
+      </p>
     </div>
   );
 };
 
 export default Login;
-
-------------LOGOUT
-
-
-import React, { useContext } from 'react';
-import { AuthContext } from '../AuthContext';
-
-const LogoutButton = () => {
-  const { logout } = useContext(AuthContext);
-
-  return <button onClick={logout}>Logout</button>;
-};
-
-export default LogoutButton;
-
-
-
-
