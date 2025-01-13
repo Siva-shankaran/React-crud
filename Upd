@@ -1,0 +1,125 @@
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Arial', sans-serif;
+}
+
+:root {
+  --bg-color: #ffffff;
+  --text-color: #333333;
+  --input-bg: #f0f0f0;
+  --button-bg: #6200ea;
+  --button-hover-bg: #3700b3;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #121212;
+    --text-color: #ffffff;
+    --input-bg: #1e1e1e;
+    --button-bg: #bb86fc;
+    --button-hover-bg: #3700b3;
+  }
+}
+
+.update-form {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: var(--input-bg);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.update-form h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.update-form input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 5px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.update-form input::placeholder {
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
+.update-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--button-bg);
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.update-btn:hover {
+  background-color: var(--button-hover-bg);
+}
+
+
+
+---------
+
+import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+
+const UpdateUser = ({ users, setUsers }) => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const user = users.find((u) => u.id === parseInt(id));
+
+  const [name, setName] = useState(user.name);
+  const [email, setEmail] = useState(user.email);
+  const [phone, setPhone] = useState(user.phone);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const updatedUser = { id: user.id, name, email, phone };
+    setUsers(users.map((u) => (u.id === user.id ? updatedUser : u)));
+    toast.success('User updated successfully!');
+    navigate('/');
+  };
+
+  return (
+    <div className="update-form">
+      <h2>Update User</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Enter Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <input
+          type="email"
+          placeholder="Enter Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Enter Phone"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+        />
+        <button type="submit" className="update-btn">Update User</button>
+      </form>
+    </div>
+  );
+};
+
+export default UpdateUser;
+
+
