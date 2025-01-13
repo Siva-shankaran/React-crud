@@ -1,0 +1,142 @@
+-------AuthCpjtext. jsx-----
+
+import React, { createContext, useState } from 'react';
+
+// Create Auth Context
+export const AuthContext = createContext();
+
+// Auth Provider component
+export const AuthProvider = ({ children }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Login function
+  const login = () => setIsLoggedIn(true);
+
+  // Logout function
+  const logout = () => setIsLoggedIn(false);
+
+  return (
+    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+
+--------App. jsx-------
+
+import React, { useContext } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import { AuthContext, AuthProvider } from './AuthContext';
+import 'react-toastify/dist/ReactToastify.css';
+import UserCard from './components/UserCard';
+import UserDetails from './components/UserDetails';
+import UpdateUser from './components/UpdateUser';
+import Login from './components/Login';
+import './App.css';
+
+function App() {
+  const { isLoggedIn } = useContext(AuthContext);
+
+  return (
+    <AuthProvider>
+      <Router>
+        <div className="app-container">
+          <header>
+            <h1>User Management System</h1>
+          </header>
+
+          <main>
+            <Routes>
+              <Route
+                path="/"
+                element={isLoggedIn ? <UserCard /> : <Navigate to="/login" />}
+              />
+              <Route
+                path="/user/:id"
+                element={isLoggedIn ? <UserDetails /> : <Navigate to="/login" />}
+              />
+              <Route
+                path="/update/:id"
+                element={isLoggedIn ? <UpdateUser /> : <Navigate to="/login" />}
+              />
+              <Route path="/login" element={<Login />} />
+            </Routes>
+          </main>
+
+          <ToastContainer />
+        </div>
+      </Router>
+    </AuthProvider>
+  );
+}
+
+export default App;
+
+
+
+--------login. jsx------
+
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../AuthContext';
+import './Login.css';
+
+const Login = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (username === 'admin' && password === 'admin') {
+      login();
+      navigate('/');
+    } else {
+      alert('Invalid credentials!');
+    }
+  };
+
+  return (
+    <div className="login-container">
+      <h1>Login</h1>
+      <form onSubmit={handleLogin}>
+        <input
+          type="text"
+          placeholder="Enter Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Enter Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button type="submit">Login</button>
+      </form>
+    </div>
+  );
+};
+
+export default Login;
+
+------------LOGOUT
+
+
+import React, { useContext } from 'react';
+import { AuthContext } from '../AuthContext';
+
+const LogoutButton = () => {
+  const { logout } = useContext(AuthContext);
+
+  return <button onClick={logout}>Logout</button>;
+};
+
+export default LogoutButton;
+
+
+
+
