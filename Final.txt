@@ -1,6 +1,6 @@
 // Updated App.jsx
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate, Link } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate, Link, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -10,114 +10,104 @@ import UpdateUser from './components/UpdateUser';
 import Login from './components/Login';
 import './App.css';
 import AddUser from './components/AddUser';
-import Dashboard from "./components/Dashboard";
-import { AuthProvider } from './components/AuthContext';
-import PrivateRoute from '.components/PrivateRoute';
-
-
+import Dashboard from './components/Dashboard';
+import { AuthProvider, AuthContext } from './components/AuthContext';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
-  const [users, setUsers] = useState([]);
- 
-
-  const addUser = (user) => {
-    setUsers([...users, { ...user, id: users.length + 1 }]);
-    toast.success('User added successfully!');
-  };
+  const navigate = useNavigate();
+  const { currentUser, setCurrentUser } = useContext(AuthContext); // Access the context
 
   const handleLogout = () => {
-    setCurrentUser(null);
+    setCurrentUser(null); // Clear the current user
     navigate('/login'); // Redirect to login after logout
+    toast.info('Logged out successfully!');
   };
 
   return (
     <AuthProvider>
-    <Router>
-      <div className="container d-flex flex-column justify-content-center align-items-center vh-100">
-        {/* Header */}
-        <header className="text-center mb-4">
-          <h1 className="text-primary display-4">User Management System</h1>
-        </header>
+      <Router>
+        <div className="container d-flex flex-column justify-content-center align-items-center vh-100">
+          {/* Header */}
+          <header className="text-center mb-4">
+            <h1 className="text-primary display-4">User Management System</h1>
+          </header>
 
-        {/* Navigation Bar */}
-        <div className="navbar">
-          <Link to="/" className="nav-item">
-            Home
-          </Link>
-          <Link to="/add-user" className="nav-item">
-            Add User
-          </Link>
-          <Link to="/dashboard" className="nav-item">
-            Dashboard
-          </Link>
-          
-          <Link to="/login" className="nav-item" onClick={handleLogout}>
-  Logout
-</Link>
+          {/* Navigation Bar */}
+          <div className="navbar">
+            <Link to="/" className="nav-item">
+              Home
+            </Link>
+            <Link to="/add-user" className="nav-item">
+              Add User
+            </Link>
+            <Link to="/dashboard" className="nav-item">
+              Dashboard
+            </Link>
+            {currentUser ? (
+              <button className="nav-item btn btn-link" onClick={handleLogout}>
+                Logout
+              </button>
+            ) : (
+              <Link to="/login" className="nav-item">
+                Login
+              </Link>
+            )}
+          </div>
 
+          {/* Main Content */}
+          <main className="w-100">
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/"
+                element={
+                  <PrivateRoute>
+                    <UserCard />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/user/:id"
+                element={
+                  <PrivateRoute>
+                    <UserDetails />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/update/:id"
+                element={
+                  <PrivateRoute>
+                    <UpdateUser />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/add-user"
+                element={
+                  <PrivateRoute>
+                    <AddUser />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/dashboard"
+                element={
+                  <PrivateRoute>
+                    <Dashboard />
+                  </PrivateRoute>
+                }
+              />
+            </Routes>
+          </main>
+
+          {/* Toast Notifications */}
+          <ToastContainer />
         </div>
-
-        {/* Main Content */}
-        <main className="w-100">
-          <Routes>
-            <Route
-              path="/login"
-              element={
-                <Login/>
-              }
-            />
-            <Route
-              path="/"
-              element={
-                <PrivateRoute>
-                  <UserCard users={users} />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/user/:id"
-              element={
-                <PrivateRoute>
-                  <UserDetails users={users} setUsers={setUsers} />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/update/:id"
-              element={
-                <PrivateRoute >
-                  <UpdateUser users={users} setUsers={setUsers} />
-                </PrivateRoute>
-              }
-            />
-            {/* Placeholder routes for Add User, Dashboard, and Logout */}
-            <Route
-              path="/add-user"
-              element={
-                <PrivateRoute >
-                 <AddUser addUser={addUser} />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/dashboard"
-              element={
-                <PrivateRoute >
-                  <Dashboard totalUsers={users.length} />
-                </PrivateRoute>
-              }
-            />
-          </Routes>
-        </main>
-
-        {/* Toast Notifications */}
-        <ToastContainer />
-      </div>
-    </Router>
+      </Router>
     </AuthProvider>
-
   );
 }
 
 export default App;
-
