@@ -6,20 +6,38 @@ const Dashboard = ({ totalUsers }) => {
 
   return (
     <div style={styles.container}>
-      <h1 style={styles.header}>Dashboard</h1>
-      <div style={styles.cardContainer}>
-        <div style={styles.card}>
-          <h2>Total Users</h2>
-          <p>{totalUsers}</p>
-        </div>
-        <div style={styles.card}>
-          <h2>Actions</h2>
-          <button style={styles.button} onClick={() => navigate("/users")}>
-            View Users
-          </button>
-          <button style={styles.button} onClick={() => navigate("/add-user")}>
-            Add User
-          </button>
+      <header style={styles.header}>
+        <h1>User Management System</h1>
+        <nav style={styles.nav}>
+          <button onClick={() => navigate("/")}>Home</button>
+          <button onClick={() => navigate("/add-user")}>Add User</button>
+          <button onClick={() => navigate("/dashboard")}>Dashboard</button>
+          <button onClick={() => navigate("/logout")}>Logout</button>
+        </nav>
+      </header>
+
+      <div style={styles.dashboard}>
+        <h2 style={styles.dashboardTitle}>Dashboard</h2>
+        <div style={styles.cardsContainer}>
+          <div style={styles.card}>
+            <h3>Total Users</h3>
+            <p style={styles.userCount}>{totalUsers}</p>
+          </div>
+          <div style={styles.card}>
+            <h3>Actions</h3>
+            <button
+              style={styles.actionButton}
+              onClick={() => navigate("/users")}
+            >
+              View Users
+            </button>
+            <button
+              style={styles.actionButton}
+              onClick={() => navigate("/add-user")}
+            >
+              Add User
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -28,62 +46,67 @@ const Dashboard = ({ totalUsers }) => {
 
 const styles = {
   container: {
-    padding: "20px",
-    textAlign: "center",
+    background: "url('https://via.placeholder.com/1920x1080') no-repeat center",
+    backgroundSize: "cover",
+    minHeight: "100vh",
+    color: "#fff",
   },
   header: {
-    fontSize: "2rem",
-    marginBottom: "20px",
+    textAlign: "center",
+    padding: "20px",
+    background: "rgba(0, 0, 0, 0.6)",
   },
-  cardContainer: {
+  nav: {
     display: "flex",
     justifyContent: "center",
     gap: "20px",
+    marginTop: "10px",
+  },
+  navButton: {
+    padding: "10px 20px",
+    border: "none",
+    borderRadius: "5px",
+    background: "#007BFF",
+    color: "#fff",
+    fontSize: "16px",
+    cursor: "pointer",
+  },
+  dashboard: {
+    textAlign: "center",
+    marginTop: "40px",
+  },
+  dashboardTitle: {
+    fontSize: "2rem",
+    textShadow: "2px 2px 5px #000",
+  },
+  cardsContainer: {
+    display: "flex",
+    justifyContent: "center",
+    gap: "20px",
+    marginTop: "20px",
   },
   card: {
     padding: "20px",
-    border: "1px solid #ddd",
-    borderRadius: "8px",
+    background: "rgba(0, 0, 0, 0.6)",
+    borderRadius: "10px",
     width: "200px",
     textAlign: "center",
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.8)",
   },
-  button: {
+  userCount: {
+    fontSize: "2rem",
+    fontWeight: "bold",
+    margin: "10px 0",
+  },
+  actionButton: {
     marginTop: "10px",
-    padding: "10px",
-    fontSize: "1rem",
+    padding: "10px 15px",
     borderRadius: "5px",
-    border: "none",
     background: "#007BFF",
-    color: "white",
+    color: "#fff",
+    border: "none",
     cursor: "pointer",
   },
 };
 
 export default Dashboard;
-
-
-
-
-----------
-
-
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Dashboard from "./components/Dashboard";
-import UserList from "./components/UserList"; // Assuming you have a UserList component
-import AddUser from "./components/AddUser";   // Assuming you have an AddUser component
-
-function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Dashboard totalUsers={10} />} />
-        <Route path="/users" element={<UserList />} />
-        <Route path="/add-user" element={<AddUser />} />
-      </Routes>
-    </Router>
-  );
-}
-
-export default App;
-
