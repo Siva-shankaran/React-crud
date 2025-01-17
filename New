@@ -1,0 +1,232 @@
+auth
+
+
+
+// AuthContext.js
+import React, { createContext, useContext, useState } from 'react';
+
+const AuthContext = createContext();
+
+export const AuthProvider = ({ children }) => {
+  const [authUsers, setAuthUsers] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  const login = (username, password) => {
+    const user = authUsers.find(
+      (user) => user.username === username && user.password === password
+    );
+    if (user) {
+      setCurrentUser(user);
+      return true; // Successful login
+    }
+    return false; // Login failed
+  };
+
+  const register = (username, password) => {
+    if (authUsers.find((user) => user.username === username)) {
+      return false; // Username already exists
+    }
+    setAuthUsers([...authUsers, { username, password }]);
+    return true; // Registration successful
+  };
+
+  const logout = () => {
+    setCurrentUser(null);
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{ authUsers, currentUser, login, register, logout }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => useContext(AuthContext);
+
+
+
+-------app. jsx-----
+
+// Updated App.jsx
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Navigate, Link } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import UserCard from './components/UserCard';
+import UserDetails from './components/UserDetails';
+import UpdateUser from './components/UpdateUser';
+import Login from './components/Login';
+import AddUser from './components/AddUser';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import './App.css';
+
+function PrivateRoute({ children }) {
+  const { currentUser } = useAuth();
+  return currentUser ? children : <Navigate to="/login" replace />;
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <div className="container d-flex flex-column justify-content-center align-items-center vh-100">
+          {/* Header */}
+          <header className="text-center mb-4">
+            <h1 className="text-primary display-4">User Management System</h1>
+          </header>
+
+          {/* Navigation Bar */}
+          <Navbar />
+
+          {/* Main Content */}
+          <main className="w-100">
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route
+                path="/"
+                element={
+                  <PrivateRoute>
+                    <UserCard />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/user/:id"
+                element={
+                  <PrivateRoute>
+                    <UserDetails />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/update/:id"
+                element={
+                  <PrivateRoute>
+                    <UpdateUser />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/add-user"
+                element={
+                  <PrivateRoute>
+                    <AddUser />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/dashboard"
+                element={
+                  <PrivateRoute>
+                    <div>Dashboard Page (Under Construction)</div>
+                  </PrivateRoute>
+                }
+              />
+            </Routes>
+          </main>
+
+          {/* Toast Notifications */}
+          <ToastContainer />
+        </div>
+      </Router>
+    </AuthProvider>
+  );
+}
+
+const Navbar = () => {
+  const { currentUser, logout } = useAuth();
+  return (
+    <div className="navbar">
+      <Link to="/" className="nav-item">
+        Home
+      </Link>
+      <Link to="/add-user" className="nav-item">
+        Add User
+      </Link>
+      <Link to="/dashboard" className="nav-item">
+        Dashboard
+      </Link>
+      {currentUser ? (
+        <Link to="/login" className="nav-item" onClick={logout}>
+          Logout
+        </Link>
+      ) : (
+        <Link to="/login" className="nav-item">
+          Login
+        </Link>
+      )}
+    </div>
+  );
+};
+
+export default App;
+
+
+----------login. jsx-----
+// Updated Login.jsx
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import './Login.css';
+
+const Login = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
+  const { login, register } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (isRegistering) {
+      if (register(username, password)) {
+        alert('Registration successful!');
+        setIsRegistering(false);
+      } else {
+        alert('Username already exists!');
+      }
+    } else {
+      if (login(username, password)) {
+        navigate('/');
+      } else {
+        alert('Invalid credentials!');
+      }
+    }
+    setUsername('');
+    setPassword('');
+  };
+
+  return (
+    <div className="login-container">
+      <h2>{isRegistering ? 'Register' : 'Login'}</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button type="submit">{isRegistering ? 'Register' : 'Login'}</button>
+      </form>
+      <p>
+        {isRegistering ? 'Already have an account?' : 'New user?'}{' '}
+        <button onClick={() => setIsRegistering(!isRegistering)}>
+          {isRegistering ? 'Login' : 'Register'}
+        </button>
+      </p>
+    </div>
+  );
+};
+
+export default Login;
+
+
