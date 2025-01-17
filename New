@@ -1,71 +1,4 @@
-
-
-----------login. jsx-----
-// Updated Login.jsx
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import './Login.css';
-
-const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [isRegistering, setIsRegistering] = useState(false);
-  const { login, register } = useAuth();
-  const navigate = useNavigate();
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (isRegistering) {
-      if (register(username, password)) {
-        alert('Registration successful!');
-        setIsRegistering(false);
-      } else {
-        alert('Username already exists!');
-      }
-    } else {
-      if (login(username, password)) {
-        navigate('/');
-      } else {
-        alert('Invalid credentials!');
-      }
-    }
-    setUsername('');
-    setPassword('');
-  };
-
-  return (
-    <div className="login-container">
-      <h2>{isRegistering ? 'Register' : 'Login'}</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">{isRegistering ? 'Register' : 'Login'}</button>
-      </form>
-      <p>
-        {isRegistering ? 'Already have an account?' : 'New user?'}{' '}
-        <button onClick={() => setIsRegistering(!isRegistering)}>
-          {isRegistering ? 'Login' : 'Register'}
-        </button>
-      </p>
-    </div>
-  );
-};
-
-export default Login;
-
--------------------------login.css-----------------
-
+login. css
 
 /* Main container styling */
 .login-container {
@@ -76,6 +9,7 @@ export default Login;
   height: 100vh;
   background-color: #000; /* Pure black background for modern look */
   color: #f0f0f0; /* Light text for contrast */
+  position: relative;
 }
 
 /* Title styling */
@@ -97,6 +31,7 @@ export default Login;
   background-color: #121212; /* Darker form background for elevation */
   border-radius: 12px;
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.5); /* Modern elevation effect */
+  position: relative;
 }
 
 /* Input field styling */
@@ -115,7 +50,7 @@ export default Login;
   color: #aaa; /* Placeholder text color */
 }
 
-/* Button styling with hover effect */
+/* Button styling with corner design */
 .login-container button {
   padding: 12px;
   font-size: 1rem;
@@ -123,7 +58,7 @@ export default Login;
   background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 50px; /* Corner styling */
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0px 4px 12px rgba(0, 123, 255, 0.4);
@@ -141,19 +76,27 @@ export default Login;
   }
 }
 
-----------------------------app.css------------------------
 
-
-/* Updated App.css for Navigation Bar */
+-------app. css
 /* General Styles */
 body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
-  background: url('webbg.webp') no-repeat center center fixed;
-  background-size: cover;
+  background: none;
   color: #f8f9fa; /* Light color for better readability */
+  overflow: hidden; /* Hide overflow for background video */
+}
+
+.video-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1; /* Place the video behind content */
 }
 
 .container {
@@ -174,6 +117,7 @@ header h1 {
   text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7); /* Text shadow for clarity */
   color: #f8f9fa; /* Lighter color for better contrast */
 }
+
 /* Navigation Bar */
 .navbar {
   display: flex;
@@ -195,6 +139,7 @@ header h1 {
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
+
 .navbar .nav-item:hover {
   background-color: #007bff;
   color: #fff;
@@ -205,26 +150,12 @@ header h1 {
   color: #fff;
 }
 
-footer {
-  background-color: rgba(0, 0, 0, 0.8); /* Darker footer for clarity */
-  padding: 10px 20px;
-  text-align: center;
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-}
-footer p {
-  margin: 0;
-  color: #ddd; /* Light gray text for better readability */
-}
-
-
 /* Input Fields and Buttons */
 input, button {
   font-size: 1rem;
   padding: 10px;
   border: none;
-  border-radius: 5px;
+  border-radius: 50px; /* Corner styling */
   margin: 10px 0;
   width: 100%;
   max-width: 400px;
@@ -234,7 +165,6 @@ input {
   background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
   color: #000; /* Dark text for input fields */
 }
-
 
 button {
   background-color: #007bff;
@@ -268,6 +198,7 @@ button:hover {
 .align-items-center {
   align-items: center;
 }
+
 /* Prevent Text Overflow */
 input, button {
   white-space: nowrap;
@@ -283,84 +214,40 @@ input, button {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
 }
 
-.form-container input, .form-container button {
-  font-size: 1rem;
-  margin: 10px 0;
-}
-
 h1, h2 {
   color: #f8f9fa; /* Light text color */
   text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8); /* Subtle shadow for better visibility */
 }
-/* User Details Container */
-.user-details {
-  background-color: #212121;
-  padding: 30px;
-  border-radius: 12px;
-  color: #f3f3f3;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
-  max-width: 400px;
-  margin: 20px auto;
-  text-align: left;
-}
-
-/* User Name Styling */
-.user-name {
-  font-size: 28px;
-  color: #ff8a00;
-  margin-bottom: 15px;
-  text-shadow: 0 0 8px rgba(255, 138, 0, 0.8);
-}
-
-/* User Email and Phone Styling */
-.user-email,
-.user-phone {
-  font-size: 18px;
-  color: #e0e0e0;
-  margin-bottom: 12px;
-}
-
-/* Button Group Styling */
-.button-group {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
-/* Delete Button Styling */
-.delete-button {
-  background-color: #ff4b2b;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.delete-button:hover {
-  background-color: #e53935;
-}
-
-/* Update Button Styling */
-.update-button {
-  background-color: #00bcd4;
-  color: #fff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.update-button:hover {
-  background-color: #008ba3;
-}
 
 
-*{
-  justify-content: center;
-}
+-----app. jsx
+import React from "react";
+import "./App.css";
+
+const App = () => {
+  return (
+    <div className="app-container">
+      {/* Background video */}
+      <video className="video-background" autoPlay muted loop>
+        <source src="/path-to-your-video.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+
+      {/* Content */}
+      <div className="form-container">
+        <h2>Login</h2>
+        <form>
+          <input type="text" placeholder="Username" />
+          <input type="password" placeholder="Password" />
+          <button type="submit">Login</button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default App;
+
+
+
 
