@@ -1,255 +1,4 @@
-login. css
-
-/* Main container styling */
-.login-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background-color: #000; /* Pure black background for modern look */
-  color: #f0f0f0; /* Light text for contrast */
-  position: relative;
-}
-
-/* Title styling */
-.login-container h2 {
-  margin-bottom: 20px;
-  font-size: 2.2rem;
-  font-weight: 600;
-  color: #ffffff;
-  text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-/* Form container with elevation */
-.login-container form {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  width: 320px;
-  padding: 30px;
-  background-color: #121212; /* Darker form background for elevation */
-  border-radius: 12px;
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.5); /* Modern elevation effect */
-  position: relative;
-}
-
-/* Input field styling */
-.login-container input {
-  padding: 12px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 8px;
-  background-color: #1a1a1a;
-  color: #f0f0f0;
-  outline: none;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.login-container input::placeholder {
-  color: #aaa; /* Placeholder text color */
-}
-
-/* Button styling with corner design */
-.login-container button {
-  padding: 12px;
-  font-size: 1rem;
-  font-weight: bold;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 50px; /* Corner styling */
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0px 4px 12px rgba(0, 123, 255, 0.4);
-}
-
-.login-container button:hover {
-  background-color: #0056b3;
-  box-shadow: 0px 6px 14px rgba(0, 86, 179, 0.6);
-}
-
-/* For small screens */
-@media (max-width: 480px) {
-  .login-container form {
-    width: 90%;
-  }
-}
-
-
--------app. css
-/* General Styles */
-body {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-  background: none;
-  color: #f8f9fa; /* Light color for better readability */
-  overflow: hidden; /* Hide overflow for background video */
-}
-
-.video-background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: -1; /* Place the video behind content */
-}
-
-.container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-header h1 {
-  font-size: 3rem;
-  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7); /* Text shadow for clarity */
-  color: #f8f9fa; /* Lighter color for better contrast */
-}
-
-/* Navigation Bar */
-.navbar {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.7);
-  padding: 10px 20px;
-  border-radius: 25px;
-  margin: 20px auto;
-  max-width: 600px;
-}
-
-.navbar .nav-item {
-  padding: 10px 20px;
-  border-radius: 20px;
-  color: #f8f9fa; /* Brighter text color */
-  font-weight: bold;
-  text-align: center;
-  cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.navbar .nav-item:hover {
-  background-color: #007bff;
-  color: #fff;
-}
-
-.navbar .nav-item.active {
-  background-color: #6c757d;
-  color: #fff;
-}
-
-/* Input Fields and Buttons */
-input, button {
-  font-size: 1rem;
-  padding: 10px;
-  border: none;
-  border-radius: 50px; /* Corner styling */
-  margin: 10px 0;
-  width: 100%;
-  max-width: 400px;
-}
-
-input {
-  background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
-  color: #000; /* Dark text for input fields */
-}
-
-button {
-  background-color: #007bff;
-  color: #fff;
-  font-weight: bold;
-  transition: all 0.3s ease;
-}
-
-button:hover {
-  background-color: #0056b3;
-  transform: translateY(-3px);
-}
-
-/* Utility classes */
-.text-primary {
-  color: #007bff;
-}
-
-.vh-100 {
-  height: 100vh;
-}
-
-.d-flex {
-  display: flex;
-}
-
-.justify-content-center {
-  justify-content: center;
-}
-
-.align-items-center {
-  align-items: center;
-}
-
-/* Prevent Text Overflow */
-input, button {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Adjust Form Container */
-.form-container {
-  background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black for form background */
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
-}
-
-h1, h2 {
-  color: #f8f9fa; /* Light text color */
-  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8); /* Subtle shadow for better visibility */
-}
-
-
------app. jsx
-import React from "react";
-import "./App.css";
-
-const App = () => {
-  return (
-    <div className="app-container">
-      {/* Background video */}
-      <video className="video-background" autoPlay muted loop>
-        <source src="/path-to-your-video.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-
-      {/* Content */}
-      <div className="form-container">
-        <h2>Login</h2>
-        <form>
-          <input type="text" placeholder="Username" />
-          <input type="password" placeholder="Password" />
-          <button type="submit">Login</button>
-        </form>
-      </div>
-    </div>
-  );
-};
-
-export default App;
-
-
--------------------------------app,jsx-------
+------1.APP.JSX--------------------------
 
 // Updated App.jsx
 import React, { useState } from 'react';
@@ -293,6 +42,7 @@ function App() {
         <source src="bgg.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
+
 
           {/* Navigation Bar */}
           <Navbar />
@@ -380,134 +130,481 @@ const Navbar = () => {
 
 export default App;
 
---------
+-----------------------------------3.Login.jsx-----------------------
 
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate, Link, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import './Login.css';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import UserCard from './components/UserCard';
-import UserDetails from './components/UserDetails';
-import UpdateUser from './components/UpdateUser';
-import Login from './components/Login';
-import './App.css';
-import AddUser from './components/AddUser';
-import Dashboard from "./components/Dashboard";
-import { AuthProvider, useAuth } from './context/AuthContext';
 
-function PrivateRoute({ children }) {
-  const { currentUser } = useAuth();
-  return currentUser ? children : <Navigate to="/login" replace />;
-}
 
-function App() {
-  const [users, setUsers] = useState([]);
-  const location = useLocation(); // Get the current route
+const Login = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
+  const { login, register } = useAuth();
+  const navigate = useNavigate();
 
-  const addUser = (user) => {
-    setUsers([...users, { ...user, id: users.length + 1 }]);
-    toast.success('User added successfully!');
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (isRegistering) {
+      if (register(username, password)) {
+        ('Registration successful!');
+        setIsRegistering(false);
+      } else {
+        alert('Username already exists!');
+      }
+    } else {
+      if (login(username, password)) {
+        navigate('/');
+      } else {
+        toast.error('Invalid credentials!');
+      }
+    }
+    setUsername('');
+    setPassword('');
   };
 
   return (
-    <AuthProvider>
-      <Router>
-        <div className="container d-flex flex-column justify-content-center align-items-center vh-100">
-          {/* Header */}
-          <header className="text-center mb-4">
-            <h1 className="text-primary display-4">User Management System</h1>
-          </header>
-
-          {/* Background video */}
-          <video className="video-background" autoPlay muted loop>
-            <source src="bgg.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-
-          {/* Render Navbar only if not on the login page */}
-          {location.pathname !== "/login" && <Navbar />}
-
-          {/* Main Content */}
-          <main className="w-100">
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route
-                path="/"
-                element={
-                  <PrivateRoute>
-                    <UserCard users={users} />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/user/:id"
-                element={
-                  <PrivateRoute>
-                    <UserDetails users={users} setUsers={setUsers} />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/update/:id"
-                element={
-                  <PrivateRoute>
-                    <UpdateUser users={users} setUsers={setUsers} />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/add-user"
-                element={
-                  <PrivateRoute>
-                    <AddUser addUser={addUser} />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/dashboard"
-                element={
-                  <PrivateRoute>
-                    <Dashboard totalUsers={users.length} />
-                  </PrivateRoute>
-                }
-              />
-            </Routes>
-          </main>
-
-          {/* Toast Notifications */}
-          <ToastContainer />
-        </div>
-      </Router>
-    </AuthProvider>
-  );
-}
-
-const Navbar = () => {
-  const { currentUser, logout } = useAuth();
-  return (
-    <div className="navbar">
-      <Link to="/" className="nav-item">
-        Home
-      </Link>
-      <Link to="/add-user" className="nav-item">
-        Add User
-      </Link>
-      <Link to="/dashboard" className="nav-item">
-        Dashboard
-      </Link>
-      {currentUser ? (
-        <Link to="/login" className="nav-item" onClick={logout}>
-          Logout
-        </Link>
-      ) : (
-        <Link to="/login" className="nav-item">
-          Login
-        </Link>
-      )}
+    <div className="login-container">
+      <h2>{isRegistering ? 'Register' : 'Login'}</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button type="submit">{isRegistering ? 'Register' : 'Login'}</button>
+      </form>
+      <p>
+        {isRegistering ? 'Already have an account?' : ' '}{' '}
+        <button onClick={() => setIsRegistering(!isRegistering)}>
+          {isRegistering ? 'Login' : 'Register'}
+        </button>
+      </p>
     </div>
   );
 };
 
-export default App;
+export default Login;
 
+-----------------------------------------4.ADDUSER.JSX-----------------
+
+// AddUser.jsx
+import React, { useState } from 'react';
+import './AddUser.css'; // Import the CSS file for styling
+
+const AddUser = ({ addUser }) => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+
+  // Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (name && email && phone) {
+      addUser({ name, email, phone });
+      setName('');
+      setEmail('');
+      setPhone('');
+    } else {
+      alert('Please fill all the fields!');
+    }
+  };
+
+  return (
+    <div className="app">
+      <h1>Add User</h1>
+      <div className="form-container">
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Enter Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <input
+            type="email"
+            placeholder="Enter Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Enter Phone"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          />
+          <button type="submit">Add User</button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default AddUser;
+
+------------------------------------5.AuthContext.jsx-----------
+
+import React, { createContext, useContext, useState } from 'react';
+
+const AuthContext = createContext();
+
+export const AuthProvider = ({ children }) => {
+  const [authUsers, setAuthUsers] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+
+  const login = (username, password) => {
+    const user = authUsers.find(
+      (user) => user.username === username && user.password === password
+    );
+    if (user) {
+      setCurrentUser(user);
+      return true; // Successful login
+    }
+    return false; // Login failed
+  };
+
+  const register = (username, password) => {
+    if (authUsers.find((user) => user.username === username)) {
+      return false; // Username already exists
+    }
+    setAuthUsers([...authUsers, { username, password }]);
+    return true; // Registration successful
+  };
+
+  const logout = () => {
+    setCurrentUser(null);
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{ authUsers, currentUser, login, register, logout }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => useContext(AuthContext);
+
+-------------------------------------------------app.css--------------
+
+
+/* Updated App.css for Navigation Bar */
+/* General Styles */
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+  background-size: cover;
+  color: #f8f9fa; /* Light color for better readability */
+}
+
+.video-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1; /* Place the video behind content */
+}
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+header h1 {
+  font-size: 3rem;
+  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7); /* Text shadow for clarity */
+  color: #f8f9fa; /* Lighter color for better contrast */
+}
+/* Navigation Bar */
+.navbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 10px 20px;
+  border-radius: 25px;
+  margin: 20px auto;
+  max-width: 600px;
+}
+
+.navbar .nav-item {
+  padding: 10px 20px;
+  border-radius: 20px;
+  color: #f8f9fa; /* Brighter text color */
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+.navbar .nav-item:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.navbar .nav-item.active {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+footer {
+  background-color: rgba(0, 0, 0, 0.8); /* Darker footer for clarity */
+  padding: 10px 20px;
+  text-align: center;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+}
+footer p {
+  margin: 0;
+  color: #ddd; /* Light gray text for better readability */
+}
+
+
+/* Input Fields and Buttons */
+input, button {
+  font-size: 1rem;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  margin: 10px 0;
+  width: 100%;
+  max-width: 400px;
+}
+
+input {
+  background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent white */
+  color: #000; /* Dark text for input fields */
+}
+
+
+button {
+  background-color: #007bff;
+  color: #fff;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: #0056b3;
+  transform: translateY(-3px);
+}
+
+/* Utility classes */
+.text-primary {
+  color: #007bff;
+}
+
+.vh-100 {
+  height: 100vh;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.justify-content-center {
+  justify-content: center;
+}
+
+.align-items-center {
+  align-items: center;
+}
+/* Prevent Text Overflow */
+input, button {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Adjust Form Container */
+.form-container {
+  background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black for form background */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
+}
+
+.form-container input, .form-container button {
+  font-size: 1rem;
+  margin: 10px 0;
+}
+
+h1, h2 {
+  color: #f8f9fa; /* Light text color */
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.8); /* Subtle shadow for better visibility */
+}
+/* User Details Container */
+.user-details {
+  background-color: #212121;
+  padding: 30px;
+  border-radius: 12px;
+  color: #f3f3f3;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  max-width: 400px;
+  margin: 20px auto;
+  text-align: left;
+}
+
+/* User Name Styling */
+.user-name {
+  font-size: 28px;
+  color: #ff8a00;
+  margin-bottom: 15px;
+  text-shadow: 0 0 8px rgba(255, 138, 0, 0.8);
+}
+
+/* User Email and Phone Styling */
+.user-email,
+.user-phone {
+  font-size: 18px;
+  color: #e0e0e0;
+  margin-bottom: 12px;
+}
+
+/* Button Group Styling */
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+/* Delete Button Styling */
+.delete-button {
+  background-color: #ff4b2b;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-button:hover {
+  background-color: #e53935;
+}
+
+/* Update Button Styling */
+.update-button {
+  background-color: #00bcd4;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.update-button:hover {
+  background-color: #008ba3;
+}
+
+
+*{
+  justify-content: center;
+}
+
+
+--------------------login.css----------------
+
+
+/* Main container styling */
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #000; /* Pure black background for modern look */
+  color: #f0f0f0; /* Light text for contrast */
+  position: relative;
+}
+
+/* Title styling */
+.login-container h2 {
+  margin-bottom: 20px;
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Form container with elevation */
+.login-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 320px;
+  padding: 30px;
+  background-color: #121212; /* Darker form background for elevation */
+  border-radius: 12px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.5); /* Modern elevation effect */
+  position: relative;
+}
+
+/* Input field styling */
+.login-container input {
+  padding: 12px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  background-color: #1a1a1a;
+  color: #f0f0f0;
+  outline: none;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.login-container input::placeholder {
+  color: #aaa; /* Placeholder text color */
+}
+
+/* Button styling with corner design */
+.login-container button {
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: bold;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50px; /* Corner styling */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0px 4px 12px rgba(0, 123, 255, 0.4);
+}
+
+.login-container button:hover {
+  background-color: #0056b3;
+  box-shadow: 0px 6px 14px rgba(0, 86, 179, 0.6);
+}
+
+/* For small screens */
+@media (max-width: 480px) {
+  .login-container form {
+    width: 90%;
+  }
+}
+    
