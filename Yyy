@@ -1,95 +1,84 @@
------------------Eye.jsx----------------------
 
-import React from "react";
-import "./Eye.css"; // Import the eye styles
-
-const Eye = () => {
-  return (
-    <div className="wrapper">
-      <div style={{ "--a": 0 }} className="btn-sensor sensor-n"></div>
-      <div style={{ "--a": 45 }} className="btn-sensor sensor-ne"></div>
-      <div style={{ "--a": 90 }} className="btn-sensor sensor-e"></div>
-      <div style={{ "--a": 135 }} className="btn-sensor sensor-se"></div>
-      <div style={{ "--a": 180 }} className="btn-sensor sensor-s"></div>
-      <div style={{ "--a": 225 }} className="btn-sensor sensor-sw"></div>
-      <div style={{ "--a": 270 }} className="btn-sensor sensor-w"></div>
-      <div style={{ "--a": 315 }} className="btn-sensor sensor-nw"></div>
-
-      <button className="btn-button">
-        <div className="btn-lid"></div>
-        <div className="btn-pupil"></div>
-      </button>
-    </div>
-  );
-};
-
-export default Eye;
-
-
------------------------------UserCard.jsx---------------------------------
-
-import React from "react";
-import { Link } from "react-router-dom";
-import "./UserCard.css"; // Import styles for user cards
-import Eye from "./Eye"; // Import the Eye component
-
-const UserCard = ({ users }) => {
-  return (
-    <div className="app">
-      <h1>User List</h1>
-      <div className="user-list">
-        {users.length === 0 ? (
-          <p>No users available. Please add a user.</p>
-        ) : (
-          users.map((user) => (
-            <Link to={`/user/${user.id}`} key={user.id} className="user-card">
-              <h3>{user.name}</h3>
-              {/* Include the Eye animation */}
-              <Eye />
-            </Link>
-          ))
-        )}
-      </div>
-    </div>
-  );
-};
-
-export default UserCard;
-
-
------------------------------Usercard.css----------------
-
-
-.app {
-  text-align: center;
-  padding: 2rem;
-}
-
-.user-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 2rem;
-}
-
-.user-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: #f3f3f3;
-  border-radius: 1rem;
-  padding: 1.5rem;
-  text-decoration: none;
-  color: #333;
-  transition: transform 0.2s ease-in-out;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.user-card:hover {
-  transform: scale(1.05);
-}
-
-.user-card h3 {
-  margin-bottom: 1rem;
-}
+2025-01-24 18:23:10,147 [main] INFO  com.altvil.Application - Starting Application on TTDCVPA27VI0689 with PID 3868 (C:\Users\gvkqsi\Fim_planning_backendsetup\fim-planning-service\aro-service\target\classes started by gvkqsi in C:\Users\gvkqsi\Fim_planning_backendsetup\fim-planning-service\aro-service)
+2025-01-24 18:23:10,151 [main] DEBUG com.altvil.Application - Running with Spring Boot v1.4.7.RELEASE, Spring v4.3.9.RELEASE
+2025-01-24 18:23:10,151 [main] INFO  com.altvil.Application - The following profiles are active: ignite_debug,email_notifications,DEV
+2025-01-24 18:23:10,226 [main] INFO  o.s.b.c.e.AnnotationConfigEmbeddedWebApplicationContext - Refreshing org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@543e593: startup date [Fri Jan 24 18:23:10 IST 2025]; root of context hierarchy
+2025-01-24 18:23:10,256 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 5.2.5.Final
+2025-01-24 18:23:17,130 [main] INFO  o.s.b.f.s.DefaultListableBeanFactory - Overriding bean definition for bean 'getJobSchedule' with a different definition: replacing [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=processCoffeeSiteStatusChangeTask; factoryMethodName=getJobSchedule; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [com/altvil/scheduler/cofee/ProcessCoffeeSiteStatusChangeTask.class]] with [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=synchronizeMarketTask; factoryMethodName=getJobSchedule; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [com/altvil/scheduler/cofee/SynchronizeMarketTask.class]]
+2025-01-24 18:23:20,242 [main] INFO  o.s.i.config.IntegrationRegistrar - No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
+2025-01-24 18:23:20,630 [main] INFO  o.s.b.f.s.DefaultListableBeanFactory - Overriding bean definition for bean 'dataSource' with a different definition: replacing [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.boot.autoconfigure.jdbc.DataSourceConfiguration$Dbcp2; factoryMethodName=dataSource; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/boot/autoconfigure/jdbc/DataSourceConfiguration$Dbcp2.class]] with [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.boot.autoconfigure.jdbc.DataSourceConfiguration$Tomcat; factoryMethodName=dataSource; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/boot/autoconfigure/jdbc/DataSourceConfiguration$Tomcat.class]]
+2025-01-24 18:24:17,491 [main] ERROR o.s.boot.SpringApplication - Application startup failed
+java.lang.IllegalStateException: Cannot load configuration class: com.altvil.Application
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.enhanceConfigurationClasses(ConfigurationClassPostProcessor.java:403)
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.postProcessBeanFactory(ConfigurationClassPostProcessor.java:249)
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(PostProcessorRegistrationDelegate.java:281)
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(PostProcessorRegistrationDelegate.java:125)
+	at org.springframework.context.support.AbstractApplicationContext.invokeBeanFactoryPostProcessors(AbstractApplicationContext.java:687)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:525)
+	at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext.refresh(EmbeddedWebApplicationContext.java:122)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:762)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:372)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:316)
+	at org.springframework.boot.builder.SpringApplicationBuilder.run(SpringApplicationBuilder.java:134)
+	at com.altvil.Application.main(Application.java:20)
+Caused by: java.lang.ExceptionInInitializerError: null
+	at org.springframework.context.annotation.ConfigurationClassEnhancer.newEnhancer(ConfigurationClassEnhancer.java:122)
+	at org.springframework.context.annotation.ConfigurationClassEnhancer.enhance(ConfigurationClassEnhancer.java:110)
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.enhanceConfigurationClasses(ConfigurationClassPostProcessor.java:393)
+	... 11 common frames omitted
+Caused by: org.springframework.cglib.core.CodeGenerationException: java.lang.reflect.InaccessibleObjectException-->Unable to make protected final java.lang.Class java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int,java.security.ProtectionDomain) throws java.lang.ClassFormatError accessible: module java.base does not "opens java.lang" to unnamed module @5066d65f
+	at org.springframework.cglib.core.ReflectUtils.defineClass(ReflectUtils.java:464)
+	at org.springframework.cglib.core.AbstractClassGenerator.generate(AbstractClassGenerator.java:336)
+	at org.springframework.cglib.core.AbstractClassGenerator$ClassLoaderData$3.apply(AbstractClassGenerator.java:93)
+	at org.springframework.cglib.core.AbstractClassGenerator$ClassLoaderData$3.apply(AbstractClassGenerator.java:91)
+	at org.springframework.cglib.core.internal.LoadingCache$2.call(LoadingCache.java:54)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at org.springframework.cglib.core.internal.LoadingCache.createEntry(LoadingCache.java:61)
+	at org.springframework.cglib.core.internal.LoadingCache.get(LoadingCache.java:34)
+	at org.springframework.cglib.core.AbstractClassGenerator$ClassLoaderData.get(AbstractClassGenerator.java:116)
+	at org.springframework.cglib.core.AbstractClassGenerator.create(AbstractClassGenerator.java:291)
+	at org.springframework.cglib.core.KeyFactory$Generator.create(KeyFactory.java:221)
+	at org.springframework.cglib.core.KeyFactory.create(KeyFactory.java:174)
+	at org.springframework.cglib.core.KeyFactory.create(KeyFactory.java:153)
+	at org.springframework.cglib.proxy.Enhancer.<clinit>(Enhancer.java:73)
+	... 14 common frames omitted
+Caused by: java.lang.reflect.InaccessibleObjectException: Unable to make protected final java.lang.Class java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int,java.security.ProtectionDomain) throws java.lang.ClassFormatError accessible: module java.base does not "opens java.lang" to unnamed module @5066d65f
+	at java.base/java.lang.reflect.AccessibleObject.throwInaccessibleObjectException(AccessibleObject.java:391)
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:367)
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:315)
+	at java.base/java.lang.reflect.Method.checkCanSetAccessible(Method.java:203)
+	at java.base/java.lang.reflect.Method.setAccessible(Method.java:197)
+	at org.springframework.cglib.core.ReflectUtils$1.run(ReflectUtils.java:61)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:571)
+	at org.springframework.cglib.core.ReflectUtils.<clinit>(ReflectUtils.java:52)
+	at org.springframework.cglib.core.KeyFactory$Generator.generateClass(KeyFactory.java:243)
+	at org.springframework.cglib.core.DefaultGeneratorStrategy.generate(DefaultGeneratorStrategy.java:25)
+	at org.springframework.cglib.core.AbstractClassGenerator.generate(AbstractClassGenerator.java:329)
+	... 26 common frames omitted
+2025-01-24 18:24:17,493 [main] INFO  o.s.b.c.e.AnnotationConfigEmbeddedWebApplicationContext - Closing org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@543e593: startup date [Fri Jan 24 18:23:10 IST 2025]; root of context hierarchy
+2025-01-24 18:24:17,494 [main] WARN  o.s.b.c.e.AnnotationConfigEmbeddedWebApplicationContext - Exception thrown from LifecycleProcessor on context close
+java.lang.IllegalStateException: LifecycleProcessor not initialized - call 'refresh' before invoking lifecycle methods via the context: org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@543e593: startup date [Fri Jan 24 18:23:10 IST 2025]; root of context hierarchy
+	at org.springframework.context.support.AbstractApplicationContext.getLifecycleProcessor(AbstractApplicationContext.java:427)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:999)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:958)
+	at org.springframework.boot.SpringApplication.handleRunFailure(SpringApplication.java:819)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:327)
+	at org.springframework.boot.builder.SpringApplicationBuilder.run(SpringApplicationBuilder.java:134)
+	at com.altvil.Application.main(Application.java:20)
+2025-01-24 18:24:17,495 [main] ERROR o.s.b.f.s.DefaultListableBeanFactory - Destroy method on bean with name 'org.springframework.boot.autoconfigure.internalCachingMetadataReaderFactory' threw an exception
+java.lang.IllegalStateException: ApplicationEventMulticaster not initialized - call 'refresh' before multicasting events via the context: org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@543e593: startup date [Fri Jan 24 18:23:10 IST 2025]; root of context hierarchy
+	at org.springframework.context.support.AbstractApplicationContext.getApplicationEventMulticaster(AbstractApplicationContext.java:414)
+	at org.springframework.context.support.ApplicationListenerDetector.postProcessBeforeDestruction(ApplicationListenerDetector.java:97)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:253)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:578)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:554)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:961)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:523)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:968)
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1030)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1006)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:958)
+	at org.springframework.boot.SpringApplication.handleRunFailure(SpringApplication.java:819)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:327)
+	at org.springframework.boot.builder.SpringApplicationBuilder.run(SpringApplicationBuilder.java:134)
+	at com.altvil.Application.main(Application.java:20)
