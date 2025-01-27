@@ -1,170 +1,182 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Login.css';
+12:44:20,097 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - About to instantiate appender of type [ch.qos.logback.core.ConsoleAppender]
+12:44:20,136 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - Naming appender as [STDOUT]
+12:44:20,221 |-WARN in ch.qos.logback.core.ConsoleAppender[STDOUT] - This appender no longer admits a layout as a sub-component, set an encoder instead.
+12:44:20,221 |-WARN in ch.qos.logback.core.ConsoleAppender[STDOUT] - To ensure compatibility, wrapping your layout in LayoutWrappingEncoder.
+12:44:20,221 |-WARN in ch.qos.logback.core.ConsoleAppender[STDOUT] - See also http://logback.qos.ch/codes.html#layoutInsteadOfEncoder for details
+12:44:20,221 |-INFO in ch.qos.logback.core.joran.action.NestedComplexPropertyIA - Assuming default type [ch.qos.logback.classic.encoder.PatternLayoutEncoder] for [encoder] property
+12:44:20,223 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - About to instantiate appender of type [ch.qos.logback.core.rolling.RollingFileAppender]
+12:44:20,229 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - Naming appender as [FILE]
+12:44:20,248 |-INFO in c.q.l.core.rolling.TimeBasedRollingPolicy@409598930 - No compression will be used
+12:44:20,250 |-INFO in c.q.l.core.rolling.TimeBasedRollingPolicy@409598930 - Will use the pattern catalina.home_IS_UNDEFINED/logs/aro-services.%d{yyyy-MM-dd}.txt for the active file
+12:44:20,255 |-INFO in c.q.l.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy - The date pattern is 'yyyy-MM-dd' from file name pattern 'catalina.home_IS_UNDEFINED/logs/aro-services.%d{yyyy-MM-dd}.txt'.
+12:44:20,255 |-INFO in c.q.l.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy - Roll-over at midnight.
+12:44:20,285 |-INFO in c.q.l.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy - Setting initial period to Fri Jan 24 19:24:23 IST 2025
+12:44:20,288 |-INFO in ch.qos.logback.core.joran.action.NestedComplexPropertyIA - Assuming default type [ch.qos.logback.classic.encoder.PatternLayoutEncoder] for [encoder] property
+12:44:20,292 |-INFO in ch.qos.logback.core.rolling.RollingFileAppender[FILE] - Active log file name: catalina.home_IS_UNDEFINED/logs/aro-services.txt
+12:44:20,292 |-INFO in ch.qos.logback.core.rolling.RollingFileAppender[FILE] - File property is set to [catalina.home_IS_UNDEFINED/logs/aro-services.txt]
+12:44:20,296 |-INFO in ch.qos.logback.classic.joran.action.LoggerContextListenerAction - Adding LoggerContextListener of type [ch.qos.logback.classic.jul.LevelChangePropagator] to the object stack
+12:44:20,298 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@2ef14fe - Propagating DEBUG level on Logger[ROOT] onto the JUL framework
+12:44:20,298 |-INFO in ch.qos.logback.classic.joran.action.LoggerContextListenerAction - Starting LoggerContextListener
+12:44:20,300 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [com.altvil] to DEBUG
+12:44:20,301 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@2ef14fe - Propagating DEBUG level on Logger[com.altvil] onto the JUL framework
+12:44:20,301 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [com.altvil.aro.service] to DEBUG
+12:44:20,301 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@2ef14fe - Propagating DEBUG level on Logger[com.altvil.aro.service] onto the JUL framework
+12:44:20,301 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [com.altvil.netop] to INFO
+12:44:20,301 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@2ef14fe - Propagating INFO level on Logger[com.altvil.netop] onto the JUL framework
+12:44:20,301 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [springfox] to WARN
+12:44:20,302 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@2ef14fe - Propagating WARN level on Logger[springfox] onto the JUL framework
+12:44:20,302 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [org.springframework.web.filter.CommonsRequestLoggingFilter] to ERROR
+12:44:20,302 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@2ef14fe - Propagating ERROR level on Logger[org.springframework.web.filter.CommonsRequestLoggingFilter] onto the JUL framework
+12:44:20,302 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [org.apache.ignite] to WARN
+12:44:20,302 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@2ef14fe - Propagating WARN level on Logger[org.apache.ignite] onto the JUL framework
+12:44:20,302 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [org.apache.ignite.internal] to WARN
+12:44:20,302 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@2ef14fe - Propagating WARN level on Logger[org.apache.ignite.internal] onto the JUL framework
+12:44:20,303 |-INFO in ch.qos.logback.classic.joran.action.RootLoggerAction - Setting level of ROOT logger to INFO
+12:44:20,303 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@2ef14fe - Propagating INFO level on Logger[ROOT] onto the JUL framework
+12:44:20,303 |-INFO in ch.qos.logback.core.joran.action.AppenderRefAction - Attaching appender named [STDOUT] to Logger[ROOT]
+12:44:20,304 |-INFO in ch.qos.logback.core.joran.action.AppenderRefAction - Attaching appender named [FILE] to Logger[ROOT]
+12:44:20,304 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - End of configuration.
+12:44:20,306 |-INFO in ch.qos.logback.classic.joran.JoranConfigurator@64c63c79 - Registering current configuration as safe fallback point
+12:44:21,313 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - About to instantiate appender of type [ch.qos.logback.core.ConsoleAppender]
+12:44:21,313 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - Naming appender as [STDOUT]
+12:44:21,315 |-WARN in ch.qos.logback.core.ConsoleAppender[STDOUT] - This appender no longer admits a layout as a sub-component, set an encoder instead.
+12:44:21,315 |-WARN in ch.qos.logback.core.ConsoleAppender[STDOUT] - To ensure compatibility, wrapping your layout in LayoutWrappingEncoder.
+12:44:21,315 |-WARN in ch.qos.logback.core.ConsoleAppender[STDOUT] - See also http://logback.qos.ch/codes.html#layoutInsteadOfEncoder for details
+12:44:21,315 |-INFO in ch.qos.logback.core.joran.action.NestedComplexPropertyIA - Assuming default type [ch.qos.logback.classic.encoder.PatternLayoutEncoder] for [encoder] property
+12:44:21,316 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - About to instantiate appender of type [ch.qos.logback.core.rolling.RollingFileAppender]
+12:44:21,316 |-INFO in ch.qos.logback.core.joran.action.AppenderAction - Naming appender as [FILE]
+12:44:21,317 |-INFO in c.q.l.core.rolling.TimeBasedRollingPolicy@1962826086 - No compression will be used
+12:44:21,318 |-INFO in c.q.l.core.rolling.TimeBasedRollingPolicy@1962826086 - Will use the pattern catalina.home_IS_UNDEFINED/logs/aro-services.%d{yyyy-MM-dd}.txt for the active file
+12:44:21,319 |-INFO in c.q.l.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy - The date pattern is 'yyyy-MM-dd' from file name pattern 'catalina.home_IS_UNDEFINED/logs/aro-services.%d{yyyy-MM-dd}.txt'.
+12:44:21,319 |-INFO in c.q.l.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy - Roll-over at midnight.
+12:44:21,320 |-INFO in c.q.l.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy - Setting initial period to Fri Jan 24 19:24:23 IST 2025
+12:44:21,320 |-INFO in ch.qos.logback.core.joran.action.NestedComplexPropertyIA - Assuming default type [ch.qos.logback.classic.encoder.PatternLayoutEncoder] for [encoder] property
+12:44:21,321 |-INFO in ch.qos.logback.core.rolling.RollingFileAppender[FILE] - Active log file name: catalina.home_IS_UNDEFINED/logs/aro-services.txt
+12:44:21,321 |-INFO in ch.qos.logback.core.rolling.RollingFileAppender[FILE] - File property is set to [catalina.home_IS_UNDEFINED/logs/aro-services.txt]
+12:44:21,322 |-INFO in ch.qos.logback.classic.joran.action.LoggerContextListenerAction - Adding LoggerContextListener of type [ch.qos.logback.classic.jul.LevelChangePropagator] to the object stack
+12:44:21,322 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@4fe875be - Propagating DEBUG level on Logger[ROOT] onto the JUL framework
+12:44:21,322 |-INFO in ch.qos.logback.classic.joran.action.LoggerContextListenerAction - Starting LoggerContextListener
+12:44:21,322 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [com.altvil] to DEBUG
+12:44:21,322 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@677b8e13 - Propagating DEBUG level on Logger[com.altvil] onto the JUL framework
+12:44:21,323 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@4fe875be - Propagating DEBUG level on Logger[com.altvil] onto the JUL framework
+12:44:21,323 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [com.altvil.aro.service] to DEBUG
+12:44:21,323 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@677b8e13 - Propagating DEBUG level on Logger[com.altvil.aro.service] onto the JUL framework
+12:44:21,324 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@4fe875be - Propagating DEBUG level on Logger[com.altvil.aro.service] onto the JUL framework
+12:44:21,324 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [com.altvil.netop] to INFO
+12:44:21,324 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@677b8e13 - Propagating INFO level on Logger[com.altvil.netop] onto the JUL framework
+12:44:21,324 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@4fe875be - Propagating INFO level on Logger[com.altvil.netop] onto the JUL framework
+12:44:21,324 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [springfox] to WARN
+12:44:21,324 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@677b8e13 - Propagating WARN level on Logger[springfox] onto the JUL framework
+12:44:21,324 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@4fe875be - Propagating WARN level on Logger[springfox] onto the JUL framework
+12:44:21,325 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [org.springframework.web.filter.CommonsRequestLoggingFilter] to ERROR
+12:44:21,325 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@677b8e13 - Propagating ERROR level on Logger[org.springframework.web.filter.CommonsRequestLoggingFilter] onto the JUL framework
+12:44:21,325 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@4fe875be - Propagating ERROR level on Logger[org.springframework.web.filter.CommonsRequestLoggingFilter] onto the JUL framework
+12:44:21,325 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [org.apache.ignite] to WARN
+12:44:21,325 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@677b8e13 - Propagating WARN level on Logger[org.apache.ignite] onto the JUL framework
+12:44:21,325 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@4fe875be - Propagating WARN level on Logger[org.apache.ignite] onto the JUL framework
+12:44:21,325 |-INFO in ch.qos.logback.classic.joran.action.LoggerAction - Setting level of logger [org.apache.ignite.internal] to WARN
+12:44:21,325 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@677b8e13 - Propagating WARN level on Logger[org.apache.ignite.internal] onto the JUL framework
+12:44:21,325 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@4fe875be - Propagating WARN level on Logger[org.apache.ignite.internal] onto the JUL framework
+12:44:21,326 |-INFO in ch.qos.logback.classic.joran.action.RootLoggerAction - Setting level of ROOT logger to INFO
+12:44:21,326 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@677b8e13 - Propagating INFO level on Logger[ROOT] onto the JUL framework
+12:44:21,326 |-INFO in ch.qos.logback.classic.jul.LevelChangePropagator@4fe875be - Propagating INFO level on Logger[ROOT] onto the JUL framework
+12:44:21,326 |-INFO in ch.qos.logback.core.joran.action.AppenderRefAction - Attaching appender named [STDOUT] to Logger[ROOT]
+12:44:21,326 |-INFO in ch.qos.logback.core.joran.action.AppenderRefAction - Attaching appender named [FILE] to Logger[ROOT]
+12:44:21,327 |-INFO in ch.qos.logback.classic.joran.action.ConfigurationAction - End of configuration.
+12:44:21,327 |-INFO in org.springframework.boot.logging.logback.SpringBootJoranConfigurator@4a9486c0 - Registering current configuration as safe fallback point
 
-const Login = ({ users, setUsers }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [isNewUser, setIsNewUser] = useState(false);
-  const navigate = useNavigate();
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+[32m :: Spring Boot :: [39m      [2m (v1.4.7.RELEASE)[0;39m
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-
-    if (isNewUser) {
-      if (!username || !password) {
-        alert('Please fill all fields!');
-        return;
-      }
-      // Add new user to users array
-      setUsers([...users, { id: users.length + 1, username, password }]);
-      alert('User registered successfully!');
-    } else {
-      // Check if user exists
-      const user = users.find((u) => u.username === username && u.password === password);
-      if (user) {
-        alert('Login successful!');
-        navigate('/');
-      } else {
-        alert('Invalid username or password!');
-      }
-    }
-
-    setUsername('');
-    setPassword('');
-  };
-
-  return (
-    <div className="login-container">
-      <h1>{isNewUser ? 'Register' : 'Login'}</h1>
-      <form onSubmit={handleLogin}>
-        <input
-          type="text"
-          placeholder="Enter Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Enter Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">{isNewUser ? 'Register' : 'Login'}</button>
-      </form>
-      <p onClick={() => setIsNewUser(!isNewUser)}>
-        {isNewUser ? 'Already have an account? Login' : 'New user? Register'}
-      </p>
-    </div>
-  );
-};
-
-export default Login;
-
------------app. jsx
-
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import UserCard from './components/UserCard';
-import UserDetails from './components/UserDetails';
-import UpdateUser from './components/UpdateUser';
-import Login from './components/Login';
-import './App.css';
-
-function App() {
-  const [users, setUsers] = useState([]);
-  const [darkMode, setDarkMode] = useState(false);
-
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    document.body.classList.toggle('dark-mode');
-  };
-
-  return (
-    <Router>
-      <div className={`app-container ${darkMode ? 'dark' : ''}`}>
-        <header>
-          <h1>User Management System</h1>
-          <button onClick={toggleDarkMode}>
-            {darkMode ? 'Light Mode' : 'Dark Mode'}
-          </button>
-        </header>
-
-        <main>
-          <Routes>
-            <Route path="/" element={<UserCard users={users} addUser={() => {}} />} />
-            <Route path="/user/:id" element={<UserDetails users={users} setUsers={setUsers} />} />
-            <Route path="/update/:id" element={<UpdateUser users={users} setUsers={setUsers} />} />
-            <Route path="/login" element={<Login users={users} setUsers={setUsers} />} />
-          </Routes>
-        </main>
-
-        <ToastContainer />
-      </div>
-    </Router>
-  );
-}
-
-export default App;
-
-------------login. css
-body {
-  background-color: #f3f4f6;
-  font-family: 'Arial', sans-serif;
-}
-
-.login-container {
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  max-width: 400px;
-  margin: 50px auto;
-  padding: 20px;
-  text-align: center;
-}
-
-.login-container h1 {
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.login-container form {
-  display: flex;
-  flex-direction: column;
-}
-
-.login-container input {
-  padding: 12px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 16px;
-}
-
-.login-container button {
-  padding: 12px;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s ease;
-}
-
-.login-container button:hover {
-  background-color: #0056b3;
-}
-
-.login-container p {
-  color: #007bff;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-.login-container p:hover {
-  text-decoration: underline;
-}
-
+2025-01-27 12:44:21,594 [main] INFO  com.altvil.Application - Starting Application on TTDCVPA27VI0689 with PID 4168 (C:\Users\gvkqsi\Fim_planning_backendsetup\fim-planning-service\aro-service\target\classes started by gvkqsi in C:\Users\gvkqsi\Fim_planning_backendsetup\fim-planning-service\aro-service)
+12:44:21,601 |-INFO in c.q.l.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy - Elapsed period: Fri Jan 24 19:24:23 IST 2025
+12:44:21,602 |-INFO in c.q.l.co.rolling.helper.RenameUtil - Renaming file [catalina.home_IS_UNDEFINED\logs\aro-services.txt] to [catalina.home_IS_UNDEFINED\logs\aro-services.2025-01-24.txt]
+12:44:21,607 |-INFO in c.q.l.core.rolling.helper.TimeBasedArchiveRemover - first clean up after appender initialization
+12:44:21,607 |-INFO in c.q.l.core.rolling.helper.TimeBasedArchiveRemover - Multiple periods, i.e. 32 periods, seem to have elapsed. This is expected at application start.
+2025-01-27 12:44:21,609 [main] DEBUG com.altvil.Application - Running with Spring Boot v1.4.7.RELEASE, Spring v4.3.9.RELEASE
+2025-01-27 12:44:21,609 [main] INFO  com.altvil.Application - The following profiles are active: ignite_debug,email_notifications,DEV
+2025-01-27 12:44:21,698 [main] INFO  o.s.b.c.e.AnnotationConfigEmbeddedWebApplicationContext - Refreshing org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@43effd89: startup date [Mon Jan 27 12:44:21 IST 2025]; root of context hierarchy
+2025-01-27 12:44:21,800 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 5.2.5.Final
+2025-01-27 12:44:28,125 [main] INFO  o.s.b.f.s.DefaultListableBeanFactory - Overriding bean definition for bean 'getJobSchedule' with a different definition: replacing [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=processCoffeeSiteStatusChangeTask; factoryMethodName=getJobSchedule; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [com/altvil/scheduler/cofee/ProcessCoffeeSiteStatusChangeTask.class]] with [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=synchronizeMarketTask; factoryMethodName=getJobSchedule; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [com/altvil/scheduler/cofee/SynchronizeMarketTask.class]]
+2025-01-27 12:44:30,230 [main] INFO  o.s.i.config.IntegrationRegistrar - No bean named 'integrationHeaderChannelRegistry' has been explicitly defined. Therefore, a default DefaultHeaderChannelRegistry will be created.
+2025-01-27 12:44:30,670 [main] INFO  o.s.b.f.s.DefaultListableBeanFactory - Overriding bean definition for bean 'dataSource' with a different definition: replacing [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.boot.autoconfigure.jdbc.DataSourceConfiguration$Dbcp2; factoryMethodName=dataSource; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/boot/autoconfigure/jdbc/DataSourceConfiguration$Dbcp2.class]] with [Root bean: class [null]; scope=; abstract=false; lazyInit=false; autowireMode=3; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=org.springframework.boot.autoconfigure.jdbc.DataSourceConfiguration$Tomcat; factoryMethodName=dataSource; initMethodName=null; destroyMethodName=(inferred); defined in class path resource [org/springframework/boot/autoconfigure/jdbc/DataSourceConfiguration$Tomcat.class]]
+2025-01-27 12:45:26,049 [main] ERROR o.s.boot.SpringApplication - Application startup failed
+java.lang.IllegalStateException: Cannot load configuration class: com.altvil.Application
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.enhanceConfigurationClasses(ConfigurationClassPostProcessor.java:403)
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.postProcessBeanFactory(ConfigurationClassPostProcessor.java:249)
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(PostProcessorRegistrationDelegate.java:281)
+	at org.springframework.context.support.PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(PostProcessorRegistrationDelegate.java:125)
+	at org.springframework.context.support.AbstractApplicationContext.invokeBeanFactoryPostProcessors(AbstractApplicationContext.java:687)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:525)
+	at org.springframework.boot.context.embedded.EmbeddedWebApplicationContext.refresh(EmbeddedWebApplicationContext.java:122)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:762)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:372)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:316)
+	at org.springframework.boot.builder.SpringApplicationBuilder.run(SpringApplicationBuilder.java:134)
+	at com.altvil.Application.main(Application.java:20)
+Caused by: java.lang.ExceptionInInitializerError: null
+	at org.springframework.context.annotation.ConfigurationClassEnhancer.newEnhancer(ConfigurationClassEnhancer.java:122)
+	at org.springframework.context.annotation.ConfigurationClassEnhancer.enhance(ConfigurationClassEnhancer.java:110)
+	at org.springframework.context.annotation.ConfigurationClassPostProcessor.enhanceConfigurationClasses(ConfigurationClassPostProcessor.java:393)
+	... 11 common frames omitted
+Caused by: org.springframework.cglib.core.CodeGenerationException: java.lang.reflect.InaccessibleObjectException-->Unable to make protected final java.lang.Class java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int,java.security.ProtectionDomain) throws java.lang.ClassFormatError accessible: module java.base does not "opens java.lang" to unnamed module @5066d65f
+	at org.springframework.cglib.core.ReflectUtils.defineClass(ReflectUtils.java:464)
+	at org.springframework.cglib.core.AbstractClassGenerator.generate(AbstractClassGenerator.java:336)
+	at org.springframework.cglib.core.AbstractClassGenerator$ClassLoaderData$3.apply(AbstractClassGenerator.java:93)
+	at org.springframework.cglib.core.AbstractClassGenerator$ClassLoaderData$3.apply(AbstractClassGenerator.java:91)
+	at org.springframework.cglib.core.internal.LoadingCache$2.call(LoadingCache.java:54)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at org.springframework.cglib.core.internal.LoadingCache.createEntry(LoadingCache.java:61)
+	at org.springframework.cglib.core.internal.LoadingCache.get(LoadingCache.java:34)
+	at org.springframework.cglib.core.AbstractClassGenerator$ClassLoaderData.get(AbstractClassGenerator.java:116)
+	at org.springframework.cglib.core.AbstractClassGenerator.create(AbstractClassGenerator.java:291)
+	at org.springframework.cglib.core.KeyFactory$Generator.create(KeyFactory.java:221)
+	at org.springframework.cglib.core.KeyFactory.create(KeyFactory.java:174)
+	at org.springframework.cglib.core.KeyFactory.create(KeyFactory.java:153)
+	at org.springframework.cglib.proxy.Enhancer.<clinit>(Enhancer.java:73)
+	... 14 common frames omitted
+Caused by: java.lang.reflect.InaccessibleObjectException: Unable to make protected final java.lang.Class java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int,java.security.ProtectionDomain) throws java.lang.ClassFormatError accessible: module java.base does not "opens java.lang" to unnamed module @5066d65f
+	at java.base/java.lang.reflect.AccessibleObject.throwInaccessibleObjectException(AccessibleObject.java:391)
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:367)
+	at java.base/java.lang.reflect.AccessibleObject.checkCanSetAccessible(AccessibleObject.java:315)
+	at java.base/java.lang.reflect.Method.checkCanSetAccessible(Method.java:203)
+	at java.base/java.lang.reflect.Method.setAccessible(Method.java:197)
+	at org.springframework.cglib.core.ReflectUtils$1.run(ReflectUtils.java:61)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:571)
+	at org.springframework.cglib.core.ReflectUtils.<clinit>(ReflectUtils.java:52)
+	at org.springframework.cglib.core.KeyFactory$Generator.generateClass(KeyFactory.java:243)
+	at org.springframework.cglib.core.DefaultGeneratorStrategy.generate(DefaultGeneratorStrategy.java:25)
+	at org.springframework.cglib.core.AbstractClassGenerator.generate(AbstractClassGenerator.java:329)
+	... 26 common frames omitted
+2025-01-27 12:45:26,052 [main] INFO  o.s.b.c.e.AnnotationConfigEmbeddedWebApplicationContext - Closing org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@43effd89: startup date [Mon Jan 27 12:44:21 IST 2025]; root of context hierarchy
+2025-01-27 12:45:26,056 [main] WARN  o.s.b.c.e.AnnotationConfigEmbeddedWebApplicationContext - Exception thrown from LifecycleProcessor on context close
+java.lang.IllegalStateException: LifecycleProcessor not initialized - call 'refresh' before invoking lifecycle methods via the context: org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@43effd89: startup date [Mon Jan 27 12:44:21 IST 2025]; root of context hierarchy
+	at org.springframework.context.support.AbstractApplicationContext.getLifecycleProcessor(AbstractApplicationContext.java:427)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:999)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:958)
+	at org.springframework.boot.SpringApplication.handleRunFailure(SpringApplication.java:819)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:327)
+	at org.springframework.boot.builder.SpringApplicationBuilder.run(SpringApplicationBuilder.java:134)
+	at com.altvil.Application.main(Application.java:20)
+2025-01-27 12:45:26,056 [main] ERROR o.s.b.f.s.DefaultListableBeanFactory - Destroy method on bean with name 'org.springframework.boot.autoconfigure.internalCachingMetadataReaderFactory' threw an exception
+java.lang.IllegalStateException: ApplicationEventMulticaster not initialized - call 'refresh' before multicasting events via the context: org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@43effd89: startup date [Mon Jan 27 12:44:21 IST 2025]; root of context hierarchy
+	at org.springframework.context.support.AbstractApplicationContext.getApplicationEventMulticaster(AbstractApplicationContext.java:414)
+	at org.springframework.context.support.ApplicationListenerDetector.postProcessBeforeDestruction(ApplicationListenerDetector.java:97)
+	at org.springframework.beans.factory.support.DisposableBeanAdapter.destroy(DisposableBeanAdapter.java:253)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroyBean(DefaultSingletonBeanRegistry.java:578)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingleton(DefaultSingletonBeanRegistry.java:554)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingleton(DefaultListableBeanFactory.java:961)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.destroySingletons(DefaultSingletonBeanRegistry.java:523)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.destroySingletons(DefaultListableBeanFactory.java:968)
+	at org.springframework.context.support.AbstractApplicationContext.destroyBeans(AbstractApplicationContext.java:1030)
+	at org.springframework.context.support.AbstractApplicationContext.doClose(AbstractApplicationContext.java:1006)
+	at org.springframework.context.support.AbstractApplicationContext.close(AbstractApplicationContext.java:958)
+	at org.springframework.boot.SpringApplication.handleRunFailure(SpringApplication.java:819)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:327)
+	at org.springframework.boot.builder.SpringApplicationBuilder.run(SpringApplicationBuilder.java:134)
+	at com.altvil.Application.main(Application.java:20)
