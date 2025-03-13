@@ -1,174 +1,685 @@
------------------------------------EyeAnimation.jsx---------------------------------
+displaycomponent.jsx
 
-import React, { useEffect, useState } from 'react';
-import './EyeAnimation.css';
-import { gsap } from 'gsap';
+import React, { Component } from "react";
+import QueryString from "query-string";
+import KeyValueComponent from "./KeyValueComponent";
+import {Button as CanvasButton} from 'rf-canvas/atoms/Button';
+import { Collapsible as CanvasCollapsible} from "rf-canvas/molecules/Collapsible";
+import { AnchorNavigation as CanvasAnchorNavigation}  from "rf-canvas/molecules/AnchorNavigation";
+import { ContentContainer as CanvasContentContainer} from "rf-canvas/atoms/ContentContainer";
+import TableComponent from "./TableComponent";
+import {getBaseUrl,getEnv} from "../../Services/crudOpsUrl";
+import ReactToPrint from "react-to-print";
+import PrintSummary from "./PrintSummary";
+import ProjectDetailsService from "../../Services/ProjectDetailsService";
+import { LocZConfig, configuration } from "./../Common/ConfigJson";
+import "./Summary.scss";
+import Utility from "./Utility";
+import {UserPreferenceService} from "shared-services";
+import DependencyService from "../../Services/DependencyService.js";
+import UserList from "../../Services/UserList";
+import { Alerts as CanvasAlerts } from 'rf-canvas/molecules/Alerts';
+import { updateScreenNameInClickstream } from "../../Services/ClickStreamService";
+import { clickStreamValues } from "../Common/JSONConstants";
+import { getGlobalBaseUrl } from "../Common/BaseUrl.jsx";
 
-const EyeAnimation = ({ password }) => {
-  const [eyeState, setEyeState] = useState('idle');
-
-  useEffect(() => {
-    const pupil = document.querySelectorAll('.btn-pupil');
-    const lid = document.querySelectorAll('.btn-lid');
-
-    if (password.length > 0) {
-      setEyeState('wide');
-      gsap.to(pupil, { scale: 1.2, duration: 0.3 });
-    } else {
-      setEyeState('idle');
-      gsap.to(pupil, { scale: 1, duration: 0.3 });
-    }
-
-    const invalidInput = password.includes(' ') || password.length < 4;
-    if (invalidInput) {
-      setEyeState('alert');
-      gsap.fromTo(lid, { scaleY: 1 }, { scaleY: 0.1, duration: 0.2, yoyo: true, repeat: 1 });
-    }
-  }, [password]);
-
-  return (
-    <div className="eye-wrapper">
-      {[...Array(2)].map((_, index) => (
-        <div key={index} className="btn-button">
-          <div className={`btn-lid ${eyeState}`}></div>
-          <div className={`btn-pupil ${eyeState}`}></div>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-export default EyeAnimation;
-
-
---------------------------------------_------EyeAnimation.css---------------------------------------------
-
-
-.eye-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 2rem;
-}
-
-.btn-button {
-  background: #fff;
-  border: 3px solid #fff;
-  border-radius: 50%;
-  height: 5rem;
-  width: 5rem;
-  position: relative;
-  margin: 0 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-lid {
-  background: transparent;
-  border-radius: 50%;
-  height: 100%;
-  position: absolute;
-  width: 100%;
-}
-
-.btn-pupil {
-  background: #000;
-  border-radius: 50%;
-  height: 1.5rem;
-  width: 1.5rem;
-  transition: transform 0.3s ease-in-out;
-}
-
-.btn-lid.wide {
-  background: transparent;
-}
-
-.btn-pupil.wide {
-  transform: scale(1.2);
-}
-
-.btn-lid.alert {
-  background: rgba(255, 0, 0, 0.5);
-  animation: blink 0.3s ease-in-out;
-}
-
-.btn-pupil.alert {
-  transform: scale(1.4);
-}
-
-@keyframes blink {
-  0%, 100% {
-    height: 100%;
+class DisplayComponent extends Component {
+  SCREEN_NAME='PROJECT_SUMMARY_DISPLAY';
+  webUrl = getBaseUrl();
+  constructor(props) {
+    super(props);
+    const queryMap = QueryString.parse(this.props.location.search) || {};
+    this.props=props;
+    this.state = {
+      queryMap: queryMap,
+      bodyData: [],
+      navigationItemsList: [],
+      tabLinks: [],
+      accExpand: [],
+      loading: false,
+      flag: 0,
+      loadprint: false,
+      collapseState: [],
+      vzId: queryMap?.etokenId && atob(queryMap.etokenId),
+      telementryReqTableValue : "N/A",
+      newDataArr :[],
+      isTableView : false,
+      tempName:[],
+      watchlistStatus:'Watcher: No',
+      showAlert: false,
+      alertInfo: '',
+      transactionId: '',
+      routingRoleId:'',
+      lastName:'',
+      firstName:'',
+      userEmail:'',
+      isDiverseTableView : false,
+      routingDetails: [],
+      aRedZone: '',
+      zRedZone: '',
+      redZoneProjectName: '',
+      redZoneProjectDesc: '',
+      typeICount: 0
+    };
+    this.pdService = new ProjectDetailsService();
+    this.utility = new Utility();
+    this.userPreferenceService = new UserPreferenceService();
+    this.dependencyService = new DependencyService();
+    this.userList = new UserList();
   }
-  50% {
-    height: 0%;
+
+  componentDidMount() {
+    updateScreenNameInClickstream(clickStreamValues.PROJECTSUMMARY_SCREEN);
+    this.pdService
+      .getConfigurationDetails(this.state.queryMap)
+      .then(res => {
+        let accordions = res.data.tabDetails[0].accordions;
+        let isAorZLocNeeded = false;
+        this.dependencyService.getProjectSummarybyProjectId(this.state.queryMap["projectId"])
+          .then(res1 => {
+            if (res1?.data?.aLoc !== undefined && res1?.data?.zLoc !== undefined) {
+              isAorZLocNeeded = true;
+            }
+        if(accordions === undefined){
+          accordions = configuration;
+        }
+        if (isAorZLocNeeded && !accordions[3]?.accordion.includes('Location Z Details')) {
+        accordions.splice(3, 0, LocZConfig);
+        }
+        let aLoc = {
+          label: "A Loc",
+          value: "aLoc"
+        }
+        let zLoc = {
+          label: "Z Loc",
+          value: "zLoc"
+        }
+        let completedTime ={
+          label: "Completed Time",
+          value: "completedTime"
+        }
+        let nfidTrackingStatus ={
+          label: "NFID Tracking Status",
+          value: "nfidTrackingStatus"
+        }
+
+        accordions.forEach(acc  => {
+          if (acc?.accordion.includes("Location A Details")) {
+            let modifiedMetaData = acc?.metaData.map(met => {
+              if (met.label.includes("Red Zone")) {
+                met.value = "clliObject.redZone"
+              }
+              return met;
+            })
+            acc.metaData = modifiedMetaData
+          }
+          if (acc?.accordion.includes("Location Z Details")) {
+            let modifiedMetaData = acc?.metaData.map(met => {
+              if (met.label.includes("Red Zone")) {
+                met.value = "clliZObject.redZone"
+              }
+              return met;
+            })
+            acc.metaData = modifiedMetaData
+          }
+        });
+
+        let testNfid ={
+          label: "Test NFID",
+          value: "testNFID"
+        }
+        const finalAccordions = accordions.map(a=>{
+          if(a.accordion === 'Summary' || a.accordion === 'Project Summary') {
+            let summaryMetaData = a?.metaData
+            for(let i =0;i <summaryMetaData.length;i++) {
+               if(summaryMetaData[i].value === "nfid" && summaryMetaData[i+1].value === "projectName"){
+               summaryMetaData.splice(i+2,0,nfidTrackingStatus)
+                   break;
+               }
+             }
+           for(let i =0;i < summaryMetaData.length;i++) {
+                if(summaryMetaData[i].value === "projectDescription"){
+                summaryMetaData.splice(i,0,testNfid)
+                  break;
+
+               }
+               }
+            if (isAorZLocNeeded) {
+              for (let i = 0; i < summaryMetaData.length; i++) {
+                if (summaryMetaData[i].value === "projectDescription") {
+                  summaryMetaData.splice(i, 0, aLoc)
+                  summaryMetaData.splice(i + 1, 0, zLoc)
+                  break;
+                }
+              }
+            }
+          }
+        })
+        console.log('finalAccordions',finalAccordions)
+        sessionStorage.clear();
+        sessionStorage.setItem('accordions', JSON.stringify(accordions));
+
+        this.dependencyService.getUserInfo()
+        .then(res =>sessionStorage.setItem("VZID", res.data.vzid));
+
+        let navItemListArr = [];
+        let tagLinksArr = [];
+        let accExpandArr = [];
+
+        accordions.forEach((acc, i) => {
+          navItemListArr.push({
+            id: "tag" + i,
+            label: acc.accordion,
+            selected: i === 0 ? true : false,
+            disabled: false
+          });
+
+          tagLinksArr.push({
+            ["tag" + i]: true
+          });
+
+          accExpandArr.push({
+            ["isExpand" + i]: i === 0 ? false : false
+          });
+        });
+        // NTSCB-15552: Print was not working when a tab of type E was found so getting onyl I types
+        const accordianTypeICount = accordions.filter(data => data.type === 'I').length;
+        this.fetchRedZone(accordions[0].url)
+        this.setState({
+          bodyData: accordions,
+          tabLinks: tagLinksArr,
+          accExpand: accExpandArr,
+          loading: true,
+          navigationItemsList: navItemListArr,
+          typeICount: accordianTypeICount
+        });
+      })
+      })
+      .catch(err => console.log("---error---", err));
+      this.loadCollapseState();
+      this.getUserInfo();
+      this.userList.fetchUserRoutingRoles(this.state.queryMap.nfid).then(res => res.data).then(res => {
+        const bodyData = res.data;
+        bodyData && bodyData.length && bodyData.forEach(t => {
+          if(this.state.vzId === t.VZID && t.routing_role_id === 63 && t.routing_role_name === "Watcher")
+          {
+            this.setState({watchlistStatus: 'Watcher: Yes',transactionId:t.transaction_id});
+          }
+          if(this.state.vzId === t.VZID)
+          {
+          this.setState({
+            routingRoleId:t.routing_role_id,
+            lastName:t.last_name,
+            firstName:t.first_name,
+            userEmail:this.state.userEmail==='null' || this.state.userEmail===null || this.state.userEmail==='' || this.state.userEmail==='Null' ? t.user_email : this.state.userEmail ,
+          })
+        }
+        })
+        
+      });
+  
+    this.userList.getUserDetailsByInput({ "_CN": this.state.vzId }).then(res => res.data).then(res => {
+      let splitCustName = res?.data[0]?.customerName.split(',')
+      this.setState({ lastName: splitCustName[0].trim(), firstName: splitCustName[1].trim() })
+    })
   }
-}
 
 
-----------------------------------------Login.jsx
+  loadCollapseState() {
+    const collapseState = this.userPreferenceService.getAllCollapseConfigForScreen(this.SCREEN_NAME);
+    this.setState({
+      collapseState: collapseState
+    });
 
+    console.log("this.env",this.env)
+  }
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import './Login.css';
-import EyeAnimation from './EyeAnimation';
+  updateCollapseState(collapsible,status) {
+    this.userPreferenceService.saveACollapseConfigForScreen(this.SCREEN_NAME,collapsible,status);
+    console.log("@@@@@@@@@@@@@@@@@@"+status)
+    this.loadCollapseState();
+  }
 
-const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [isRegistering, setIsRegistering] = useState(false);
-  const { login, register } = useAuth();
-  const navigate = useNavigate();
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (isRegistering) {
-      if (register(username, password)) {
-        alert('Registration successful!');
-        setIsRegistering(false);
-      } else {
-        alert('Username already exists!');
-      }
-    } else {
-      if (login(username, password)) {
-        navigate('/');
-      } else {
-        alert('Invalid credentials!');
-      }
+  prefixRelativeUrl(url) {
+    if (url.startsWith("/")) {
+      return getGlobalBaseUrl("web") + url;
     }
-    setUsername('');
-    setPassword('');
+    return url;
+  }
+
+  async fetchRedZone(projectSummaryUrl) {
+    projectSummaryUrl = this.prefixRelativeUrl(projectSummaryUrl)
+    let reqUrl = this.utility.replaceData(
+      projectSummaryUrl,
+      this.state.queryMap
+    );
+    await this.utility
+      .fetchGetData(reqUrl)
+      .then((res) => {
+        let aClli;
+        let zClli;
+        if (res.data.hasOwnProperty('clliObject')) {
+          if (res.data.clliObject.CLLI.length === 8) {
+            aClli = res.data.clliObject.CLLI
+          } else if (res.data.clliObject.VZBCLLI.length === 8) {
+            aClli = res.data.clliObject.VZBCLLI
+          }
+        }
+        if (res.data.hasOwnProperty('clliZObject')) {
+          if (res.data.clliZObject.CLLI.length === 8) {
+            zClli = res.data.clliZObject.CLLI
+          } else if (res.data.clliZObject.VZBCLLI.length === 8) {
+            zClli = res.data.clliZObject.VZBCLLI
+          }
+        }
+
+        let redzoneUrl = this.prefixRelativeUrl('/wfm/projectinitiation/rest/projectInitation/getRedZoneDetails');
+        if (aClli !== undefined && aClli !== "") {
+          let payload = {
+            "clli": aClli,
+            "address": "",
+            "state": "",
+            "zip": "",
+            "country": ""
+          }
+          this.utility.getRedzoneDetails(redzoneUrl, payload).then(res1 => {
+            console.log('RedZoneDetails of ALoc - ', res1.data)
+            if (res1.data.RedZoneFlag == "1") {
+              this.setState({
+                aRedZone: 'Yes',
+                redZoneProjectName: res.data.projectName,
+                redZoneProjectDesc: res.data?.projectDescription.replace(' - null','')
+              })
+            }
+          })
+        }
+        if (zClli !== undefined && zClli !== "") {
+          let payload = {
+            "clli": zClli,
+            "address": "",
+            "state": "",
+            "zip": "",
+            "country": ""
+          }
+          this.utility.getRedzoneDetails(redzoneUrl, payload).then(res2 => {
+            console.log('RedZoneDetails of ZLoc - ', res2.data)
+            if (res2.data.RedZoneFlag == "1") {
+              this.setState({
+                zRedZone: 'Yes',
+                redZoneProjectName: res.data.projectName,
+                redZoneProjectDesc: res.data?.projectDescription.replace(' - null', '')
+              })
+            }
+          })
+        }
+      })
+  }
+
+  onClick = (selectedNavItem, updatedNavigationItemsList) => {
+    let tagId = selectedNavItem.id;
+    let tagNo = 0;
+    if (tagId.length <= 4) {
+      tagNo = tagId.slice(-1) - 1;
+    } else {
+      tagNo = tagId.slice(-2) - 1;
+    }
+
+    let expNo = tagNo + 1;
+    let accExpandTemp = this.state.accExpand
+    for(let k=0; k<accExpandTemp.length; k++){
+      accExpandTemp[k]["isExpand" + k] = false
+    }
+    accExpandTemp[expNo]["isExpand" + expNo] = true
+    this.setState({
+      accExpand : accExpandTemp
+    })
+
+    let copy = JSON.parse(JSON.stringify(this.state.tabLinks));
+    for (let i = 0; i < this.state.tabLinks.length; i++) {
+      copy[i]["tag" + i] = true;
+    }
+    for (let j = 0; j <= tagNo; j++) {
+      copy[j]["tag" + j] = false;
+    }
+
+    this.setState({
+      tabLinks: copy,
+      navigationItemsList: updatedNavigationItemsList
+    });
   };
 
-  return (
-    <div className="login-container">
-      <EyeAnimation password={password} />
-      <h2>{isRegistering ? 'Register' : 'Login'}</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">{isRegistering ? 'Register' : 'Login'}</button>
-      </form>
-      <p>
-        {isRegistering ? 'Already have an account?' : ''}{' '}
-        <button onClick={() => setIsRegistering(!isRegistering)}>
-          {isRegistering ? 'Login' : 'Register'}
-        </button>
-      </p>
-    </div>
-  );
-};
+  updateItem = (message) => {
+    let newflag = this.state.flag + 1;
+    this.setState({ 
+      flag : newflag,
+      telemntChildData : message
+    })
+    // NTSCB-15552: Print was not working when a tab of type E was found
+    if(this.state.flag === this.state.typeICount){
+      this.setState({loadprint: true})
+    }
+    let newData = JSON.parse(message);
+    this.setState({
+      newDataArr : newData,
+    })
 
-export default Login;
+    if(null != newData.orderNo){
+        console.log("orderNo :::: "+newData.orderNo)
+        this.setState({isDiverseTableView : true});
+        this.setState({ routingDetails: newData.routingStatus})
+        console.log("routingDetails :: "+this.state.routingDetails)
+    }
+
+    if(newData.payloadInfo){
+      if(newData.payloadInfo.complexJson){
+        if(newData.payloadInfo.complexJson.managementIPRequested){
+          if(newData.payloadInfo.telemetryRequired === "Y" && newData.NF_PROJECT_GROUP_ID !== '1') {
+            this.setState({isTableView : true})
+          }
+          this.setState({ tempName :newData.payloadInfo.complexJson.managementIPRequested})
+        }
+      }
+    }
+
+  }
+
+  getUserInfo() {
+    this.dependencyService.getUserInfo().then(res => {
+      this.setState({
+        vzId: res.data.vzid,
+        userEmail: res.data.email,
+        firstName: res.data.firstname,
+        lastName: res.data.lastname
+    });
+  });
+}
+
+    setTelementryReqTableValue=(val)=>{
+      this.setState({telementryReqTableValue : val})
+    }
+
+    watchListFuncation= async ()=>{
+      if(this.state.watchlistStatus==='Watcher: No')
+      {
+          let payload = {
+            "transactionId": 0,
+            "routingRoleId": this.state.routingRoleId,
+            "nfId":  this.state.queryMap.nfid,
+            "nfProjectId": this.state.queryMap.projectId,
+            "lastName": this.state.lastName,
+            "firstName": this.state.firstName,
+            "userEmail": this.state.userEmail,
+            "userCellNumber":'',
+            "lastModifiedBy": 0,
+            "vzId":this.state.vzId,
+          };
+          this.dependencyService.addWatcher(payload).then(res => {
+             const response=res;
+             console.log(response);
+             if(this.isSuccess(res))
+             {
+              this.dependencyService.triggerNotifyWatcher(this.state.queryMap.nfid).then(notify =>{
+                console.log(notify);
+                const transactionid= response.data.transactionId;
+                this.setState({ showAlert: true, alertInfo: 'Email Subscription Done Successfully' });
+                this.setState({watchlistStatus: 'Watcher: Yes', transactionId: transactionid});
+              }
+              )
+             }
+           });  
+      }
+      if(this.state.watchlistStatus==='Watcher: Yes')
+      {
+          this.dependencyService.deleteWatcher(this.state.transactionId).then(res => {
+             const response=res;
+             console.log(response);
+             if(this.isSuccess(res))
+             {
+              this.setState({ showAlert: true, alertInfo: 'Email Unsubscription Done Successfully' });
+              this.setState({watchlistStatus: 'Watcher: No'})
+             }
+           });  
+      }
+  };
+
+  isSuccess = (response) => {
+		//console.log(response.data);
+		if (response.status === 200) {
+			if (response.data !== null || response.data !== undefined) return true;
+		} else {
+			return false;
+		}
+	};
+
+  render() {
+    return (
+      <div className="display-component-home">   
+     <span>
+     <CanvasCollapsible
+          isOpen={this.state.collapseState.includes('STATUS_INDICATOR')}
+          title={"Status Indicators"}
+          target={"statusIndicators"}
+          onClicked={status => {this.updateCollapseState('STATUS_INDICATOR',status)}}>      
+               <iframe
+                 allowFullScreen               
+                 src={this.webUrl + `/coe-canvas/nfid-views/index.html#statusIndicators?returnIcon=`+true}                                      
+                 allowtransparency="true"                             
+                 width="100%"
+                 height="170px"
+                 frameBorder="0"               />
+                 </CanvasCollapsible>
+             {this.state.collapseState.includes('STATUS_INDICATOR')&&<div class="bold-line" />}
+                </span>
+                {this.state.showAlert && <CanvasAlerts alertType={'success'} autoCloseInMilliSeconds={8000} onClickCloseIcon={() => this.setState({ showAlert: false })}>
+                {this.state.alertInfo}
+              </CanvasAlerts>} 
+        <div className="tab-container">
+          <div className="anchor-navigation-div">
+            <CanvasAnchorNavigation
+              className="anchor-navigation-div"
+              navigationItems={this.state.navigationItemsList}
+              onClickNavigationItem={(
+                selectedNavItem,
+                updatedNavigationItemsList
+              ) => this.onClick(selectedNavItem, updatedNavigationItemsList)}
+            ></CanvasAnchorNavigation>
+          </div>
+          <div className="watchlist-button-div">
+                  <CanvasButton
+                    disabled={false}
+                    type={"secondary"}
+                    size={"small"}
+                    onClick={()=>{
+                      this.watchListFuncation();
+                    }} 
+                  >
+                    {this.state.watchlistStatus}
+                  </CanvasButton>
+          </div>
+          <div className="print-button-div">
+            <ReactToPrint
+              trigger={() => {
+                return (
+                  <CanvasButton
+                    disabled={false}
+                    type={"secondary"}
+                    size={"small"}
+                  >
+                    Print
+                  </CanvasButton>
+                );
+              }}
+              content={() => this.componentRef}
+            />
+          </div>
+        </div>
+
+        <div className="print-summary-div">
+          {this.state.loadprint && (
+            <PrintSummary queryMap={this.state.queryMap} 
+              ref={el => (this.componentRef = el)} />)}
+        </div>
+
+        {this.state.loading &&
+          this.state.bodyData.map((data, key) => {
+            return (
+              <div
+                key={key}
+                style={{
+                  display: this.state.tabLinks[key]["tag" + key]
+                    ? "block"
+                    : "none"
+                }}
+              >
+                {data.type === 'I' ? (
+                  <CanvasContentContainer className="canvas-container">
+                    <CanvasCollapsible
+                      isOpen={this.state.accExpand[key]["isExpand" + key] || this.state.collapseState.includes(data.accordion)}
+                      title={data.accordion}
+                      target={data.accordion}
+                      onClicked={status => {
+                        console.log("@@@@@@@@@@@@@@@@@@@@@Collapsible status ", key);
+                        this.updateCollapseState(data.accordion,status)
+                      }}
+                      isChild={false}
+                    >
+                      {data.component === "KeyValueComponent" ? (
+                        <div>
+                        <KeyValueComponent
+                          queryMap={this.state.queryMap}
+                          method={data.method}
+                          url={data.url}
+                          key={key}
+                          title={data.accordion}
+                          metaData={data.metaData}
+                          selectedTask={this.updateItem}
+                          telementryTable = {this.setTelementryReqTableValue}
+                          redZoneProjectDesc={this.state.redZoneProjectDesc}
+                          redZoneProjectName={this.state.redZoneProjectName}
+                          aRedZone = {this.state.aRedZone}
+                          zRedZone = {this.state.zRedZone}
+                        />
+                        {
+                        ( key === 1 && this.state.isTableView) &&
+                        <div>
+                         <table className="table temp-table table-bordered">
+                              <thead>
+                                  <tr>
+                                    <th>Template Name</th>
+                                    <th>Device MGMT Type</th>
+                                    <th>Template Component</th>
+                                    <th>Template Qty</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                {this.state.tempName.map((item , index )=><tr key={index}>
+                                  <td>{item.templateName}</td>
+                                  <td>{item.deviceMgmtType}</td>
+                                  <td>{item.components[0].name}</td>
+                                  <td>{item.components[0].quantity}</td>
+                                </tr>)}
+                              </tbody>
+                          </table>
+                         </div>
+                         }
+                         {
+                           (key == 1 && this.state.isDiverseTableView) &&
+                          <div>
+                         <table className="table temp-table table-bordered">
+                              <thead>
+                                  <tr>
+                                    <th>Route/Circuit Reference</th>
+                                    <th>Desigination</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                              {this.state.routingDetails && this.state.routingDetails.map((item , index )=><tr key={index}>
+                                  <td>{item.diverseFromTcr}{item.diverseFromOtherCircuits}</td>
+                                  <td>{item.flag}</td>
+                                </tr>)}
+                              </tbody>
+                          </table>
+                         </div>
+                         }
+                         </div>
+                      ) : (
+                        <TableComponent
+                          queryMap={this.state.queryMap}
+                          method={data.method}
+                          payload={data.payload}
+                          url={data.url}
+                          title={data.accordion}
+                          metadata={data.metaData}
+                          isPagination={true}
+                          selectedTask={this.updateItem}
+                          component={this.utility.getUniqueId()}
+                        />
+                      )}
+                    </CanvasCollapsible>
+                  </CanvasContentContainer>
+                ) : (
+                  <CanvasContentContainer className="canvas-container">
+                    <CanvasCollapsible title={data.accordion} target={data.accordion}>
+                      <iframe
+                        title={data.accordion}
+                        src={this.utility.replaceData(
+                          data.url,
+                          this.state.queryMap
+                        )}
+                        width="100%"
+                        height="600px"
+                        frameBorder="0"
+                      />
+
+                    </CanvasCollapsible>
+                  </CanvasContentContainer>
+                )}
+              </div>
+            );
+          })}
+      </div>
+    );
+  }
+}
+
+export default DisplayComponent;
+--------------------------------summary constnat.js-------------------------
+
+export const REASON_PROJECT_DESCRIPTION = 'Change in Project Description';
+export const REASON_EQUI_DESCRIPTION= 'Change in Equipment Definition';
+
+----------------utility.js---------------------
+
+import Axios from "axios";
+import * as _uniqueId from "lodash/uniqueId";
+
+export default class CommonComponent {
+  async fetchGetData(reqUrl, customParams) {
+    return await Axios({ method: "GET", url: reqUrl, ...customParams });
+  }
+
+  async fetchPostData(reqUrl, reqPayload, customParams) {
+    return await Axios({
+      method: "POST",
+      url: reqUrl,
+      data: JSON.parse(reqPayload),
+      ...customParams
+    });
+  }
+
+  async getRedzoneDetails(reqUrl,payload) {
+    return Axios({ method: "POST", data: payload, url: reqUrl });
+  }
+
+
+  replaceData(data, queryMap) {
+    if(data !== undefined && queryMap !== undefined)
+    return data
+      .replace("[projectId]", queryMap["projectId"])
+      .replace("[nfId]", queryMap["nfid"]);
+  }
+
+  getUniqueId() {
+    return _uniqueId();
+  }
+}
