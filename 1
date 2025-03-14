@@ -1,0 +1,207 @@
+import React from "react";
+import { FieldBox as CanvasFieldBox} from "rf-canvas/atoms/FieldBox";
+import Utility from "./Utility";
+import {CanvasTooltip} from "rf-canvas";
+import { getGlobalBaseUrl } from "../Common/BaseUrl";
+import DescriptionHistoryModal from "./DescriptionHistoryModal";
+import RevisionService from "../../Services/RevsionService";
+import moment from "moment";
+import "./KeyValueComponent.scss";
+import "./NeatStatus.scss";
+import equal from 'fast-deep-equal';
+import TestNFIDCheckbox from "./TestNFIDCheckbox";
+var jsonpath = require("jsonpath");
+class KeyValueComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      queryMap: this.props.queryMap,
+      method: this.props.method,
+      url: this.prefixRelativeUrl(this.props.url),
+      title: "",
+      bodyData: [],
+      metaData: [],
+      showDescPopUp: false,
+      modalData: {}
+    };
+    this.utility = new Utility();
+    this.revService = new RevisionService();
+  }
+  prefixRelativeUrl(url) {
+    if (url.startsWith("/")) {
+      return getGlobalBaseUrl("web") + url;
+    }
+    return url;
+  }
+  async componentDidMount() {
+    let nftrackingurl= this.prefixRelativeUrl('/wfm/projectinitiation/rest/NetworkFulfillmentService/getNfidTrackingStatus?projectId=');
+      this.revService
+      .getAllRevisions(this.state.queryMap.nfid, this.state.queryMap.projectId)
+      .then((res) => {
+        let localModalData = this.state.modalData
+        let versions = {};
+        let equipmentversions = {};
+        let revReasonversions = {};
+        let revRemarksversions = {};
+        res.data.forEach((data) => {
+          versions[data.revisionVersion] = data.projectDescription;
+          equipmentversions[data.revisionVersion] = data.equipmentDescription;
+          revReasonversions[data.revisionVersion] = data.revisionReason;
+          revRemarksversions[data.revisionVersion] = data.revisionSummary;
+        });
+        this.setState({ allrevisions: versions });
+        this.setState({ allEquirevisions: equipmentversions });
+        this.setState({ allReasonrevisions: revReasonversions });
+        this.setState({ allRemarksrevisions: revRemarksversions });
+        localModalData["allrevisions"] = versions;
+        localModalData["allEquirevisions"] = equipmentversions;
+        localModalData["allReasonrevisions"] = revReasonversions;
+        localModalData["allRemarksrevisions"] = revRemarksversions;
+        var obj = res.data,
+          a = "revisionVersion";
+        var temp = [];
+        obj.forEach((o) => {
+          var t = { value: o[a].toString(), label: o[a].toString() + ".0" };
+          temp.push(t);
+        });
+        var list = [];
+        list = temp;
+        localModalData["revisionList"] = list;
+        console.log("Test localModalData",localModalData)
+        this.setState({ modalData: localModalData });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    this.revService
+      .getLatestRevisionVersion(
+        this.state.queryMap.nfid,
+        this.state.queryMap.projectId
+      )
+      .then((res) => {
+        let localModalData = this.state.modalData;
+        this.setState({
+          version: res.data.toString(),
+        });
+        localModalData["version"] = res.data.toString();
+        this.setState({ modalData: localModalData });
+      })
+      .catch((err) => {
+        let localModalData = this.state.modalData;
+        if (err.response.data.errorMessage === "Revision not found") {
+          this.setState({
+            version: "0",
+          });
+          localModalData["version"] = "0";
+          this.setState({ modalData: localModalData });
+        }
+      });
+    if (this.state.method === "GET") {
+      console.log("Keyvaluecomponent is ", this.props.queryMap);
+      var reqUrl = this.utility.replaceData(
+        this.state.url,
+        this.props.queryMap
+        );
+        await Promise.all([
+          this.getProjectSummary(reqUrl),
+          this.getNFIDTrackingStatus(nftrackingurl)
+        ])
+        // this.getRedzoneDetails();
+      }
+    }
+
+  componentDidUpdate = (prevProps, prevState) => {
+    let summarydata = this.state.bodyData
+    if (!equal(prevProps.aRedZone, this.props.aRedZone)) {
+      if (this.props.aRedZone === ('Yes')) {
+        if (summarydata !== undefined && summarydata.clliObject !== undefined) {
+          summarydata.clliObject.redZone = this.props.aRedZone
+          summarydata.projectName = this.props.redZoneProjectName
+          summarydata.projectDescription = this.props.redZoneProjectDesc
+        }
+      }
+      this.setState({
+        bodyData: summarydata
+      })
+    }
+    if (!equal(prevProps.zRedZone, this.props.zRedZone)) {
+      if (this.props.zRedZone === ('Yes')) {
+        if (summarydata !== undefined && summarydata.clliZObject !== undefined) {
+          summarydata.clliZObject.redZone = this.props.zRedZone
+          summarydata.projectName = this.props.redZoneProjectName
+          summarydata.projectDescription = this.props.redZoneProjectDesc
+        }
+      }
+      this.setState({
+        bodyData: summarydata
+      })
+    }
+  };
+  
+    getProjectSummary(reqUrl){
+      return this.utility
+        .fetchGetData(reqUrl)
+        .then((res) => {
+          if(res.data.hasOwnProperty('clliObject')){
+            res.data.clliObject.redZone = 'No';
+            if(res.data.clliObject.VZBCLLI !== res.data.clliObject.CLLI && res.data.clliObject.CLLI !='' && res.data.clliObject.VZBCLLI != ''){
+              res.data.clliObject.CLLI = res.data.clliObject.VZBCLLI+"/"+res.data.clliObject.CLLI;
+              res.data.SOURCE=res.data.SOURCE.replace("NA","N/A");
+            }
+          }
+          if(res.data.hasOwnProperty('clliZObject')){
+            res.data.clliZObject.redZone = 'No';
+            if(res.data.clliZObject.VZBCLLI !== res.data.clliZObject.CLLI && res.data.clliZObject.CLLI !='' && res.data.clliZObject.VZBCLLI != ''){
+              res.data.clliZObject.CLLI = res.data.clliZObject.VZBCLLI+"/"+res.data.clliZObject.CLLI;
+              res.data.SOURCE=res.data.SOURCE.replace("NA","N/A");
+            }
+          }
+          if(res.data.hasOwnProperty('payloadInfo') && res.data.payloadInfo.hasOwnProperty('faRftDate')){
+              if(res.data.payloadInfo.faRftDate.length !== 0){
+              let momentDate = moment(res.data.payloadInfo.faRftDate);
+              let tempDate = momentDate.format('MM/DD/YYYY');
+              res.data.payloadInfo.faRftDate = tempDate;
+            }
+          }
+          if(res.data.hasOwnProperty('serviceTypeName')){
+            try{ if(res.data.serviceTypeName==='Add/Remove Equipment'){
+              res.data.serviceTypeName = res.data.payloadInfo.ServiceType !== 'Add/Remove Equipment'?
+              res.data.payloadInfo.ServiceType:'Remove Equipment';}
+          }catch(e){console.log(e);}
+          }
+          // For displaying 'Add/Remove Equipment' as Project Type
+          if(res.data.hasOwnProperty('projectTypeName') && res.data.hasOwnProperty('serviceTypeName')){
+            try{ if(res.data.projectTypeName === 'NGM-ROADM' && res.data.serviceTypeName==='Add/Remove Equipment'){
+              res.data.serviceTypeName = res.data.payloadInfo.ServiceType;}
+          }catch(e){console.log(e);}
+          }
+
+          if (res.data.hasOwnProperty('payloadInfo') && res.data.payloadInfo.hasOwnProperty('addRemoveCCR') && !res.data.payloadInfo.hasOwnProperty('createUsingSingleNFID')) {
+            res.data.payloadInfo.createUsingSingleNFID = res.data.payloadInfo.addRemoveCCR;
+          }
+          if (res.data.hasOwnProperty('payloadInfo') && res.data.payloadInfo.hasOwnProperty('decomRequired')
+            && res.data.payloadInfo.hasOwnProperty('decomLegacyOnly') && !res.data.payloadInfo.hasOwnProperty('addOrRemoveProjectActivity')) {
+            if (res.data.payloadInfo.decomLegacyOnly === 'N' && res.data.payloadInfo.decomRequired === 'N') {
+              res.data.payloadInfo.addOrRemoveProjectActivity = 'Add Only';
+            } else if (res.data.payloadInfo.decomLegacyOnly === 'Y' && res.data.payloadInfo.decomRequired === 'Y') {
+              res.data.payloadInfo.addOrRemoveProjectActivity = 'Remove Only';
+            } else if (res.data.payloadInfo.decomLegacyOnly === 'N' && res.data.payloadInfo.decomRequired === 'Y') {
+              res.data.payloadInfo.addOrRemoveProjectActivity = 'Add and Remove';
+            }
+          }
+          sessionStorage.setItem(
+            this.props.title.replaceAll(" ", ""),
+            JSON.stringify(res.data)
+          );
+          let bodyData2 = res.data;
+          bodyData2.nfidTrackingStatus = this.state.bodyData.nfidTrackingStatus;
+          this.setState({
+            bodyData: bodyData2,
+            });
+          this.getUpdatedTask(this.state.bodyData);
+        })
+        .catch((err) => {
+          console.log("---error---", err);
+          this.getUpdatedTask(err);
+        });
+    }
