@@ -1,0 +1,191 @@
+getNFIDTrackingStatus(nftrackingurl) {
+      return this.utility
+        .fetchGetData(nftrackingurl + this.state.queryMap.projectId)
+        .then((res1) => {
+          let bodyData1 = { ...this.state.bodyData };
+          if (res1.data.nfidTrackingStatus) {
+            bodyData1.nfidTrackingStatus = res1.data.nfidTrackingStatus;
+          } else { bodyData1.nfidTrackingStatus = "N/A"; }
+          this.setState({
+            bodyData: bodyData1
+          });
+        }
+        ).catch((err) => {
+          let bodyData1 = { ...this.state.bodyData };
+          bodyData1.nfidTrackingStatus = "N/A";
+          this.setState({
+            bodyData: bodyData1
+          });
+        });
+  }
+
+  // getRedzoneDetails(){
+  //   let redzoneUrl = this.prefixRelativeUrl('/wfm/projectinitiation/rest/projectInitation/getRedZoneDetails');
+  //   let CLLI = this.state.bodyData?.clliObject?.CLLI;
+  //   let payload = {
+  //     "clli":CLLI,
+  //     "address":"",
+  //     "state":"",
+  //     "zip":"",
+  //     "country":""
+  // }
+  //  return this.utility.getRedzoneDetails(redzoneUrl,payload).then(res=>{
+  //   let redZoneBodyData = { ...this.state.bodyData };
+  //   if(res.data.RedZoneFlag == "1" && redZoneBodyData.payloadInfo.redZone == "No"){
+  //     redZoneBodyData.payloadInfo.redZone = "Yes";
+  //     redZoneBodyData.projectName = "RedZone: "+redZoneBodyData.projectName;
+  //     redZoneBodyData.projectDescription = `RedZone - ${res.data.RedZoneRemark}: `+redZoneBodyData.projectDescription;
+  //   }
+  //    else if(res.data.RedZoneFlag == "0" && redZoneBodyData.payloadInfo.redZone == "Yes"){
+  //     redZoneBodyData.payloadInfo.redZone = "No";
+  //     redZoneBodyData.projectName = redZoneBodyData.projectName.split(":")[1];
+  //     redZoneBodyData.projectDescription = redZoneBodyData.projectDescription.split(":")[1];
+  //   }
+  //   this.setState({
+  //     bodyData: redZoneBodyData
+  //   })
+  //  })
+  // }
+
+
+  getColSize(key){
+    console.log('@@@@@@@'+key);
+    let size = 'xs12-sm6-md4-lg2';
+    if(key==='Description'){
+      size = 'xs12-sm6-md4-lg12';
+    }else if(key==='Equipment Definition'){
+      size = 'xs12-sm6-md4-lg12';
+    }else if(key==='Delivery Instructions'){
+      size = 'xs12-sm6-md4-lg12';
+    }else if(key === 'Project Name' || key === 'NFID Tracking Status') {
+      size = 'xs12-sm6-md4-lg4';
+    }
+   
+    return size;
+  }
+  isEmptyObject(obj) {
+    return !Object.keys(obj).length;
+  }
+  ProjectName(data) {
+    if(data.length>100){
+      
+       return this.getDescriptionResult(data[0],"\n")
+    }
+    else{
+      let data1 = data[0];
+      if(data1.length > 84) {
+        data1 = data1.substring(0,85);
+        data1 = data1 + "...";
+      }
+      return (data[0].length > 84 ? <CanvasTooltip tooltipPosition="right" tooltipContent={data[0]}>{data1}</CanvasTooltip> : <div className="ProjectName">{data}</div>)
+    }
+      
+  }
+  replaceObject(data) {
+  if(data.length>0){
+    if(data[0].includes("\n")){ 
+     return this.getDescriptionResult(data[0],"\n")
+    }
+    if(data[0].includes("\\n")){
+      return this.getDescriptionResult(data[0],"\\n")
+    }
+    else if(!data[0].includes("\n") && !data[0].includes("\\n")){
+      return (<span className="keepSpace">{data[0]}</span>)
+    }
+   }
+  }
+  getDescriptionResult(data,value){
+   return data.split(value.toString()).map(function( item, idx) {
+      return (
+          <span key={idx} className="keepSpace">
+            {item}
+            <br/>
+          </span>
+      )
+    })
+  }
+
+   getFieldValue=(label,componentValue)=>{
+        if(this.isEmptyObject(componentValue))
+            return "N/A";
+        else if(label === "Description" || label === "Equipment Definition" || label ==="Delivery Instructions")
+            return this.replaceObject(componentValue) ;
+        else if(label === "Budget Dollars"){
+            let budget = componentValue.at(0);
+            budget = "$"+Number(budget.replace("$","")).toFixed(2);
+            return budget;
+        }
+        else if(label === "Engineering Discipline") {
+          let value =   componentValue.at(0) || componentValue.at(1);
+          return value;
+        }
+        else if(label=== "Project Name"){
+          return this.ProjectName(componentValue);
+        }
+        return componentValue.toString();
+   }
+  
+  getUpdatedTask = (data) => {
+    this.props.selectedTask(JSON.stringify(data));
+  };
+  closeDescHistPopUp = () => {
+    this.setState({
+      showDescPopUp: false,
+    });
+  };
+  modalDataTrnsac = () => {
+    return this.state.modalData;
+  }
+  render() {
+    return (
+      <div>
+        {this.props.metaData.map((data, key) => {
+          let componentValue=jsonpath.query(this.state.bodyData, "$.." + data.value)
+          return (
+            <>
+              <CanvasFieldBox
+                key={key}
+                type={"readonly"}
+                labelName={
+                  data.label === "Description" ? (
+                    <>
+                      <br className="break" />
+                      {data.label}
+                      <span className="view-history"
+                        onClick={() => {
+                          this.setState({
+                            showDescPopUp: true,
+                          });
+                        }}
+                      >
+                        View History
+                      </span>
+                    </>
+                  ) : (
+                    data.label
+                  )
+                }
+                colSize={this.getColSize(data.label)}
+                value={
+                  data.label === "Test NFID" ? (
+                    <TestNFIDCheckbox NFID={this.state.queryMap.nfid} value={componentValue.at(0)} />
+                  ) :
+                  this.getFieldValue(data.label,componentValue)
+                }
+              
+              />
+              <DescriptionHistoryModal
+                modalData={this.state.modalData}
+                showDescPopUp={this.state.showDescPopUp}
+                closeDescHistPopUp={this.closeDescHistPopUp}
+              />
+            
+            </>
+              
+          );
+        })}
+      </div>
+    );
+  }
+}
+export default KeyValueComponent;
